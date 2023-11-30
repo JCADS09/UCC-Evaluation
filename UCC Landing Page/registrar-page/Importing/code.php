@@ -6,7 +6,7 @@ session_start();
 <html lang="en">
 
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/bootstrap.min.css">
 
@@ -35,19 +35,21 @@ session_start();
 </head>
 <style>
     .header {
-            background-color: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin: 0 auto 20px;
-            width: 80%;
-        }
-    body{
-        overflow-x:hidden;
+        background-color: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin: 0 auto 20px;
+        width: 80%;
     }
-    </style>
+
+    body {
+        overflow-x: hidden;
+    }
+</style>
+
 <body>
- 
+
     <div class="header-top-area" style="background-color: rgb(17, 112, 22);">
         <div class="container">
             <div class="row">
@@ -113,401 +115,365 @@ session_start();
         </div>
     </div>
     <div class="header">
-    <br>
-    <h1 style="text-align: center;">UCC Students' Grade</h1>
-    
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12 mt-4">
-                <?php
-                if (isset($_SESSION['message'])) {
-                    echo "<h4>" . $_SESSION['message'] . "</h4>";
-                    unset($_SESSION['message']);
-                }
-                ?>
-                <div class="card-body">
-                    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data">
-                    <div class="row p-t-20" style="margin-left:5%;">
-                    <div class="col-md-10">    
-                    <div class="input-file">
-                            <label for="import_file">Choose Excel File:</label>
-                            <input type="file" name="import_file" class="form-control" id="import_file"
-                                accept=".xls, .xlsx, .csv" style="width:100%;">
-            </div>
-                        </div>
-                    <div style="margin-top:2.8%;">  
-                        <div class="btn-import">
-                            <button type="submit" name="submit_excel" class="btn btn-primary" style="background-color:#077504;border:none;">Import</button>
-                        </div></div>
-            </div>
-                    </form>
-                </div>
+        <br>
+        <h1 style="text-align: center;">UCC Students' Grade</h1>
 
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 mt-4">
+                    <?php
+                    if (isset($_SESSION['message'])) {
+                        echo "<h4>" . $_SESSION['message'] . "</h4>";
+                        unset($_SESSION['message']);
+                    }
+                    ?>
+                    <div class="card-body">
+                        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data">
+                            <div class="row p-t-20" style="margin-left:5%;">
+                                <div class="col-md-10">
+                                    <div class="input-file">
+                                        <label for="import_file">Choose Excel File:</label>
+                                        <input type="file" name="import_file" class="form-control" id="import_file"
+                                            accept=".xls, .xlsx, .csv" style="width:100%;">
+                                    </div>
+                                </div>
+                                <div style="margin-top:2.8%;">
+                                    <div class="btn-import">
+                                        <button type="submit" name="submit_excel" class="btn btn-primary"
+                                            style="background-color:#077504;border:none;">Import</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
             </div>
         </div>
-    </div>
 
 
-    <?php
- require 'vendor/autoload.php';
- use PhpOffice\PhpSpreadsheet\IOFactory;
+        <?php
+        require 'vendor/autoload.php';
+        use PhpOffice\PhpSpreadsheet\IOFactory;
 
 
- error_reporting(E_ALL);
- ini_set('display_errors', 1);
- 
-    $con = mysqli_connect('localhost', 'root', '', 'uccevaluation');
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
 
-    if (!$con) {
-        die("Database connection failed: " . mysqli_connect_error());
-    }
-    $num = 1;
+        $con = mysqli_connect('localhost', 'root', '', 'uccevaluation');
 
-    if ($_SERVER["REQUEST_METHOD"] === "POST") {
-        if (isset($_POST['submit_excel'])) {
-            $fileName = $_FILES['import_file']['name'];
-            $file_ext = pathinfo($fileName, PATHINFO_EXTENSION);
-            $allowed_ext = ['xls', 'csv', 'xlsx'];
-
-            $inputFileName = $_FILES['import_file']['tmp_name'];
-            $spreadsheet = IOFactory::load($inputFileName);
-            $worksheet = $spreadsheet->getActiveSheet();
-
-            $_SESSION['courseDetails'] = [
-                'courseName' => $worksheet->getCell('C4')->getValue(),
-                'year' => $worksheet->getCell('N4')->getValue(),
-                'semester' => $worksheet->getCell('J4')->getValue(),
-                'subjectCode' => $worksheet->getCell('D5')->getValue(),
-                'subjectDescription' => $worksheet->getCell('E7')->getValue(),
-                'units' => $worksheet->getCell('K6')->getValue(),
-            ];
-
-            
-            echo "<div class='row p-t-20' style='margin-left:17%;'>";
-            echo "<div class='col-md-6'>";
-            echo "<justify>";
-            echo "<a style='font-size:13px;font-family:arial;'>Course Name: " . $_SESSION['courseDetails']['courseName'] . "<br>";
-            echo '</a>';
-            echo "<a style='font-size:15px;font-family:arial;'>Subject Code: " . $_SESSION['courseDetails']['subjectCode'] . "<br>"; 
-            echo "Subject Description: " . $_SESSION['courseDetails']['subjectDescription'] . "<br>";
-            echo '</div>';
-            echo "<div class='col-md-6'>";
-            echo "Year: " . $_SESSION['courseDetails']['year'] . "<br>";
-            echo "Semester: " . $_SESSION['courseDetails']['semester'] . "<br>";
-            echo "Units: " . $_SESSION['courseDetails']['units'] . "<br>";
-            echo '</div>';
+        if (!$con) {
+            die("Database connection failed: " . mysqli_connect_error());
+        }
+        $num = 1;
+        // ... (your existing code)
         
-            echo '</div>';
-            echo "</justify>";
-            echo '<br>';
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            if (isset($_POST['submit_excel'])) {
+                $fileName = $_FILES['import_file']['name'];
+                $file_ext = pathinfo($fileName, PATHINFO_EXTENSION);
+                $allowed_ext = ['xls', 'csv', 'xlsx'];
 
-            $startRow = 13;
-            $endRow = $worksheet->getHighestRow();
-            echo "<center>";
-            echo '<form action="' . $_SERVER['PHP_SELF'] . '" method="POST">';
-            echo '<table border="1">';
-            echo '<thead style="background-color:#393b39;color:white;">';
-            echo '<tr>';
-            echo '<th>No.</th>';
-            echo '<th>Name of Student (Alphabetical Order)</th>';
-            echo '<th>Student No.</th>';
-            echo '<th>Midterm</th>';
-            echo '<th>Final Term</th>';
-            echo '<th>Final Grade/Remarks</th>';
-            echo '</tr>';
-            echo '</thead>';
-            $skipRows = range(43, 66);
-            
-            for ($row = $startRow; $row <= $endRow; $row++, $num++) {
-                if (in_array($row, $skipRows)) {
-                    continue;
-                }
+                $inputFileName = $_FILES['import_file']['tmp_name'];
+                $spreadsheet = IOFactory::load($inputFileName);
+                $worksheet = $spreadsheet->getActiveSheet();
 
-                $no = $worksheet->getCell('B' . $row)->getValue();
-                $name = $worksheet->getCell('C' . $row)->getValue();
-                $studentNumber = $worksheet->getCell('H' . $row)->getValue();
-                $midterm = $worksheet->getCell('I' . $row)->getValue();
-                $finalterm = $worksheet->getCell('K' . $row)->getValue();
-                $finalgrades = $worksheet->getCell('N' . $row)->getValue();
+                $_SESSION['courseDetails'] = [
+                    'courseName' => $worksheet->getCell('C4')->getValue(),
+                    'year' => $worksheet->getCell('N4')->getValue(),
+                    'semester' => $worksheet->getCell('J4')->getValue(),
+                    'subjectCode' => $worksheet->getCell('D5')->getValue(),
+                    'subjectDescription' => $worksheet->getCell('E7')->getValue(),
+                    'units' => $worksheet->getCell('K6')->getValue(),
+                ];
 
-                if (empty($no) && empty($name) && empty($studentNumber) && empty($midterm) && empty($finalterm) && empty($finalgrades)) {
-                    break;
-                }
-                
 
+                echo "<div class='row p-t-20' style='margin-left:17%;'>";
+                echo "<div class='col-md-6'>";
+                echo "<justify>";
+                echo "<a style='font-size:13px;font-family:arial;'>Course Name: " . $_SESSION['courseDetails']['courseName'] . "<br>";
+                echo '</a>';
+                echo "<a style='font-size:15px;font-family:arial;'>Subject Code: " . $_SESSION['courseDetails']['subjectCode'] . "<br>";
+                echo "Subject Description: " . $_SESSION['courseDetails']['subjectDescription'] . "<br>";
+                echo '</div>';
+                echo "<div class='col-md-6'>";
+                echo "Year: " . $_SESSION['courseDetails']['year'] . "<br>";
+                echo "Semester: " . $_SESSION['courseDetails']['semester'] . "<br>";
+                echo "Units: " . $_SESSION['courseDetails']['units'] . "<br>";
+                echo '</div>';
+
+                echo '</div>';
+                echo "</justify>";
+                echo '<br>';
+
+                $startRow = 13;
+                $endRow = $worksheet->getHighestRow();
+                echo "<center>";
+                echo '<form action="' . $_SERVER['PHP_SELF'] . '" method="POST">';
+                echo '<table border="1">';
+                echo '<thead style="background-color:#393b39;color:white;">';
                 echo '<tr>';
-                echo "<td>$num</td>";
-                echo "<td>$name</td>";
-                echo "<td>$studentNumber</td>";
-                $subjectCodeKey = 'subjectCode' . $num;
-
-                echo "<td><input type='text' name='studentData[$studentNumber][$subjectCodeKey][midterm][]' value='$midterm'></td>";
-                echo "<td><input type='text' name='studentData[$studentNumber][$subjectCodeKey][finalterm][]' value='$finalterm'></td>";
-                echo "<td><input type='text' name='studentData[$studentNumber][$subjectCodeKey][finalgrades][]' value='$finalgrades'></td>";
+                echo '<th>No.</th>';
+                echo '<th>Name of Student (Alphabetical Order)</th>';
+                echo '<th>Student No.</th>';
+                echo '<th>Midterm</th>';
+                echo '<th>Final Term</th>';
+                echo '<th>Final Grade/Remarks</th>';
                 echo '</tr>';
-                $num++;
-            }
-            echo '</table>';         
-            
-            echo '<div >';
-            echo '<button class="btn btn-success" style="position:relative" type="submit" name="action" value="save_data">Save</button>';
-            echo '</div>';
-            echo '</form>';
-        }
-    }
+                echo '</thead>';
+                $skipRows = range(43, 66);
 
-    // Function to find the matching column
-    function findMatchingColumn($con, $tableName, $sampleValue)
-    {
-        $foundMatch = false;
-        $columnToFind = '';
 
-        for ($i = 1; $i <= 11; $i++) {
-            $scodeColumn = "scode$i";
-            $sampleCheckQuery = "SELECT COUNT(*) FROM $tableName WHERE $scodeColumn = ?";
-            $sampleCheckStmt = mysqli_prepare($con, $sampleCheckQuery);
+                for ($row = $startRow; $row <= $endRow; $row++, $num++) {
+                    if (in_array($row, $skipRows)) {
+                        continue;
+                    }
+                    $no = $worksheet->getCell('B' . $row)->getValue();
+                    $name = $worksheet->getCell('C' . $row)->getValue();
+                    $studentNumber = $worksheet->getCell('H' . $row)->getValue();
+                    $midterm = $worksheet->getCell('I' . $row)->getValue();
+                    $finalterm = $worksheet->getCell('K' . $row)->getValue();
+                    $finalgrades = $worksheet->getCell('N' . $row)->getValue();
 
-            if ($sampleCheckStmt) {
-                mysqli_stmt_bind_param($sampleCheckStmt, 's', $sampleValue);
-                mysqli_stmt_execute($sampleCheckStmt);
-                mysqli_stmt_bind_result($sampleCheckStmt, $count);
-                mysqli_stmt_fetch($sampleCheckStmt);
+                    if (empty($no) && empty($name) && empty($studentNumber) && empty($midterm) && empty($finalterm) && empty($finalgrades)) {
+                        break;
+                    }
 
-                if ($count > 0) {
-                    $foundMatch = true;
-                    $columnToFind = $scodeColumn;
-                    break;
+
+                    echo '<tr>';
+                    echo "<td>$num</td>";
+                    echo "<td>$name</td>";
+                    echo "<td>$studentNumber</td>";
+                    $subjectCodeKey = 'subjectCode' . $num;
+
+                    echo "<td><input type='text' name='studentData[$studentNumber][$subjectCodeKey][midterm][]' value='$midterm'></td>";
+                    echo "<td><input type='text' name='studentData[$studentNumber][$subjectCodeKey][finalterm][]' value='$finalterm'></td>";
+                    echo "<td><input type='text' name='studentData[$studentNumber][$subjectCodeKey][finalgrades][]' value='$finalgrades'></td>";
+                    echo '</tr>';
+                    $num++;
+
+
+
                 }
 
-                mysqli_stmt_close($sampleCheckStmt);
-            } else {
-                echo "Query preparation error: " . mysqli_error($con);
+                echo '</table>';
+
+                echo '<div >';
+                echo '<button class="btn btn-success" style="position:relative" type="submit" name="action" value="save_data">Save</button>';
+                echo '</div>';
+                echo '</form>';
             }
         }
 
-        return $foundMatch ? $columnToFind : '';
-    }
 
-    // Function to update the database
-    function updateDatabase($con, $tableName, $mtColumn, $ftColumn, $fgColumn, $midterm, $finalterm, $finalgrades, $studentNumber)
-    {
-        $updateQuery = "UPDATE  $tableName SET ";
-        $updateValues = array();
 
-        if ($mtColumn > 0) {
-            $updateQuery .= "mt$mtColumn = ?, ";
-            $updateValues[] = $midterm;
-        }
+        function updateDatabase($con, $tableName, $mtColumn, $ftColumn, $fgColumn, $midterm, $finalterm, $finalgrades, $studentNumber)
+        {
+            // Check if all columns are null
+            if ($mtColumn === null && $ftColumn === null && $fgColumn === null) {
+                $_SESSION['message'] = "No columns to update for student $studentNumber.";
+                $_SESSION['message'] = " $tableName.";
 
-        if ($ftColumn > 0) {
-            $updateQuery .= "ft$ftColumn = ?, ";
-            $updateValues[] = $finalterm;
-        }
+                return;
+            }
 
-        if ($fgColumn > 0) {
-            $updateQuery .= "fg$fgColumn = ?, ";
-            $updateValues[] = $finalgrades;
-        }
 
-        // Remove the trailing comma and space
-        $updateQuery = rtrim($updateQuery, ', ');
+            $updateQuery = "UPDATE $tableName SET ";
+            $updateValues = array();
 
-        // Add the WHERE clause
-        $updateQuery .= " WHERE sno = ?";
+            if ($mtColumn !== null) {
+                $updateQuery .= "$mtColumn = ?, ";
+                $updateValues[] = $midterm;
+            }
 
-        // Prepare the statement
-        $stmt = mysqli_prepare($con, $updateQuery);
+            if ($ftColumn !== null) {
+                $updateQuery .= "$ftColumn = ?, ";
+                $updateValues[] = $finalterm;
+            }
 
-        if ($stmt) {
-            // Create an array of references for binding
-            $params = array();
-            $types = '';
+            if ($fgColumn !== null) {
+                $updateQuery .= "$fgColumn = ?, ";
+                $updateValues[] = $finalgrades;
+            }
 
-            foreach ($updateValues as &$value) {
-                $params[] = &$value;
+            // Remove the trailing comma and space
+            $updateQuery = rtrim($updateQuery, ', ');
+
+            // Add the WHERE clause
+            $updateQuery .= " WHERE sno = ?";
+
+            // Prepare the statement
+            $stmt = mysqli_prepare($con, $updateQuery);
+
+            // Check if the statement is prepared successfully
+            if ($stmt) {
+                // Create an array of references for binding
+                $params = array();
+                $types = '';
+
+                foreach ($updateValues as &$value) {
+                    $params[] = &$value;
+                    $types .= 's';
+                }
+
+                $params[] = &$studentNumber;
                 $types .= 's';
-            }
 
-            $params[] = &$studentNumber;
-            $types .= 's';
+                // Bind parameters
+                mysqli_stmt_bind_param($stmt, $types, ...$params);
 
-            // Bind parameters
-            mysqli_stmt_bind_param($stmt, $types, ...$params);
+                // Execute the query
+                $result = mysqli_stmt_execute($stmt);
 
-            // Execute the query
-            $result = mysqli_stmt_execute($stmt);
+                if ($result) {
+                    $_SESSION['message'] = "Data updated successfully.";
+                } else {
+                    $_SESSION['message'] = "Data update failed for student $studentNumber: " . mysqli_error($con);
+                }
 
-            if ($result) {
-                $_SESSION['message'] = "Data updated successfully.";
+                // Close the statement
+                mysqli_stmt_close($stmt);
             } else {
-                $_SESSION['message'] = "Data update failed for student $studentNumber: " . mysqli_error($con);
+                $_SESSION['message'] = "Statement preparation error: " . mysqli_error($con);
             }
-
-            mysqli_stmt_close($stmt);
-        } else {
-            $_SESSION['message'] = "Query preparation error: " . mysqli_error($con);
         }
-    }
+        if (isset($_POST['action']) && $_POST['action'] === 'save_data') {
+            // Check if course details are available in the session
+            if (!isset($_SESSION['courseDetails'])) {
+                echo "Course details not available. Please import an Excel file first.";
+            } else {
+                // Check if student data is set and is an array
+                if (isset($_POST['studentData']) && is_array($_POST['studentData'])) {
+                    // Loop through each student's data
+                    foreach ($_POST['studentData'] as $studentNumber => $subjectData) {
+                        // Get course details from the session
+                        $excelYear = $_SESSION['courseDetails']['year'];
+                        $excelSemester = $_SESSION['courseDetails']['semester'];
+                        $subjectCode = $_SESSION['courseDetails']['subjectCode'];
 
-    if (isset($_POST['action']) && $_POST['action'] === 'save_data') {
-        if (!isset($_SESSION['courseDetails'])) {
-            echo "Course details not available. Please import an Excel file first.";
-        } else {
-            if (isset($_POST['studentData']) && is_array($_POST['studentData'])) {
+                        // Query to retrieve table names
+                        $query = "SELECT table_name FROM information_schema.columns 
+                                  WHERE table_schema = 'uccevaluation' 
+                                  AND (column_name = 'sy1' OR column_name = 'semester')";
+                        $result = mysqli_query($con, $query);
 
-                foreach ($_POST['studentData'] as $studentNumber => $subjectData) {
+                        if ($result) {
+                            // Loop through the result to find the matching table
+                            while ($row = mysqli_fetch_assoc($result)) {
+                                $tableName = $row['table_name'];
 
-                    $excelYear = $_SESSION['courseDetails']['year'];
-                    $excelSemester = $_SESSION['courseDetails']['semester'];
-                    $subjectcode = $_SESSION['courseDetails']['subjectCode'];
-                    $query = "SELECT table_name FROM information_schema.columns 
-                              WHERE table_schema = 'uccevaluation' 
-                              AND (column_name = 'sy1' OR column_name = 'semester')";
+                                // Check if the table for the given year and semester exists
+                                $checkQuery = "SELECT * FROM $tableName WHERE sy1 = '$excelYear' AND semester = '$excelSemester'";
+                                $checkResult = mysqli_query($con, $checkQuery);
 
-                    $result = mysqli_query($con, $query);
+                                if ($checkResult && mysqli_num_rows($checkResult) > 0) {
+                                    echo "Table Name: $tableName";
 
-                    if ($result) {
-
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            $tableName = $row['table_name'];
-
-                            $checkQuery = "SELECT * FROM $tableName WHERE sy1 = '$excelYear' AND semester = '$excelSemester'";
-                            $checkResult = mysqli_query($con, $checkQuery);
-
-                            if ($checkResult && mysqli_num_rows($checkResult) > 0) {
-                                echo "Table Name: $tableName";
-                                break;
+                                    break;
+                                }
                             }
-                        }
 
-                        if (empty($tableName)) {
-                            echo "No matching table found";
-                        } else {
-                            foreach ($subjectData as $subjectCodeKey => $data) {
+                            // If no matching table is found
+                            if (empty($tableName)) {
+                                echo "No matching table found";
+                            } else {
+                                // Loop through each subject data for the student
+                                foreach ($subjectData as $subjectCodeKey => $data) {
+                                    $mtColumn = $ftColumn = $fgColumn = null;
 
-                                $foundMatch = false;
-                                $subjectCode = $_SESSION['courseDetails']['subjectCode'];
-                                $sampleValue = $subjectCode;
-                                $columnToFind = findMatchingColumn($con, $tableName, $sampleValue);
+                                    // Query to retrieve column names for the given table
+                                    $query = "SELECT column_name FROM information_schema.columns 
+                                                WHERE table_schema = 'uccevaluation' AND table_name = '$tableName'";
+                                    $result = mysqli_query($con, $query);
 
-                                if (!empty($columnToFind)) {
-                                    switch ($columnToFind) {
-                                        case 'scode1':
-                                            $mtColumn = 1;
-                                            $ftColumn = 1;
-                                            $fgColumn = 1;
-                                            break;
-                                        case 'scode2':
-                                            $mtColumn = 2;
-                                            $ftColumn = 2;
-                                            $fgColumn = 2;
-                                            break;
-                                        case 'scode3':
-                                            $mtColumn = 3;
-                                            $ftColumn = 3;
-                                            $fgColumn = 3;
-                                            break;
-                                        case 'scode4':
-                                            $mtColumn = 4;
-                                            $ftColumn = 4;
-                                            $fgColumn = 4;
-                                            break;
-                                        case 'scode5':
-                                            $mtColumn = 5;
-                                            $ftColumn = 5;
-                                            $fgColumn = 5;
-                                            break;
-                                        case 'scode6':
-                                            $mtColumn = 6;
-                                            $ftColumn = 6;
-                                            $fgColumn = 6;
-                                            break;
-                                        case 'scode7':
-                                            $mtColumn = 7;
-                                            $ftColumn = 7;
-                                            $fgColumn = 7;
-                                            break;
-                                        case 'scode8':
-                                            $mtColumn = 8;
-                                            $ftColumn = 8;
-                                            $fgColumn = 8;
-                                            break;
-                                        case 'scode9':
-                                            $mtColumn = 9;
-                                            $ftColumn = 9;
-                                            $fgColumn = 9;
-                                            break;
-                                        case 'scode10':
-                                            $mtColumn = 10;
-                                            $ftColumn = 10;
-                                            $fgColumn = 10;
-                                            break;
-                                        case 'scode11':
-                                            $mtColumn = 11;
-                                            $ftColumn = 11;
-                                            $fgColumn = 11;
-                                            break;
+                                    if ($result) {
+                                        // Loop through the result to find the matching column for the subject code
+                                        $foundColumn = false;
 
-                                        default:
+                                        $foundColumn = false;
+                                        while ($row = mysqli_fetch_assoc($result)) {
+                                            $columnName = $row['column_name'];
 
-                                            break;
+                                            // Check if the column for the given subjectCode exists in the table for the specific studentNumber
+                                            $checkQuery = "SELECT $columnName FROM $tableName WHERE sy1 = '$excelYear' AND semester = '$excelSemester' AND $columnName = '$subjectCode' AND sno = '$studentNumber'";
+                                            $checkResult = mysqli_query($con, $checkQuery);
+
+                                            if ($checkResult && mysqli_num_rows($checkResult) > 0) {
+                                                echo "Column Name for Subject Code $subjectCode and Student Number $studentNumber: $columnName";
+
+                                                // Set columns based on the found column
+                                                $mtColumn = 'mt' . substr($columnName, -1);
+                                                $ftColumn = 'ft' . substr($columnName, -1);
+                                                $fgColumn = 'fg' . substr($columnName, -1);
+
+                                                $foundColumn = true;
+                                                break;
+                                            }
+                                        }
+
+                                        // Check if no matching column is found
+                                        if (!$foundColumn) {
+                                            echo "No matching column found for Subject Code $subjectCode and Student Number $studentNumber";
+                                            // You can handle this situation accordingly, e.g., set default values or skip the current subjectCode for the current student
+                                        }
+                                        // Get midterm, final term, and final grades from the data
+                                        $midterm = isset($data['midterm'][0]) ? $data['midterm'][0] : null;
+                                        $finalterm = isset($data['finalterm'][0]) ? $data['finalterm'][0] : null;
+                                        $finalgrades = isset($data['finalgrades'][0]) ? $data['finalgrades'][0] : null;
+
+                                        // Check if all required values are present
+                                        if (!empty($midterm) && !empty($finalterm) && !empty($finalgrades)) {
+                                            // Update the database with the student's data
+                                            updateDatabase($con, $tableName, $mtColumn, $ftColumn, $fgColumn, $midterm, $finalterm, $finalgrades, $studentNumber);
+                                        }
                                     }
-                                } else {
-
-                                }
-
-                                $midterm = isset($data['midterm'][0]) ? $data['midterm'][0] : null;
-                                $finalterm = isset($data['finalterm'][0]) ? $data['finalterm'][0] : null;
-                                $finalgrades = isset($data['finalgrades'][0]) ? $data['finalgrades'][0] : null;
-
-                                if (!empty($midterm) && !empty($finalterm) && !empty($finalgrades)) {
-                                    updateDatabase($con, $tableName, $mtColumn, $ftColumn, $fgColumn, $midterm, $finalterm, $finalgrades, $studentNumber);
                                 }
                             }
+                        } else {
+                            echo "Query failed: " . mysqli_error($con);
                         }
-                    } else {
-                        echo "Query failed: " . mysqli_error($con);
                     }
                 }
             }
         }
-    }
 
-    // Your existing code for closing the database connection and displaying the HTML footer
-    mysqli_close($con);
-    ?>
-    <!--Script-->
-    <script src="../../js/vendor/jquery-1.12.4.min.js"></script>
-    <script src="../../s/bootstrap.min.js"></script>
-    <script src="../../js/wow.min.js"></script>
-    <script src="../../js/jquery-price-slider.js"></script>
-    <script src="../../js/owl.carousel.min.js"></script>
-    <script src="../../js/jquery.scrollUp.min.js"></script>
-    <script src="../../js/meanmenu/jquery.meanmenu.js"></script>
-    <script src="../../js/counterup/jquery.counterup.min.js"></script>
-    <script src="../../js/counterup/waypoints.min.js"></script>
-    <script src="../../js/counterup/counterup-active.js"></script>
-    <script src="../../js/scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
-    <script src="../../js/jvectormap/jquery-jvectormap-2.0.2.min.js"></script>
-    <script src="../../js/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-    <script src="../../js/jvectormap/jvectormap-active.js"></script>
-    <script src="../../js/sparkline/jquery.sparkline.min.js"></script>
-    <script src="../../js/sparkline/sparkline-active.js"></script>
-    <script src="../../js/flot/jquery.flot.js"></script>
-    <script src="../../js/flot/jquery.flot.resize.js"></script>
-    <script src="../../s/flot/jquery.flot.pie.js"></script>
-    <script src="../../js/flot/jquery.flot.tooltip.min.js"></script>
-    <script src="../../js/flot/jquery.flot.orderBars.js"></script>
-    <script src="../../js/flot/curvedLines.js"></script>
-    <script src="../../js/flot/flot-active.js"></script>
-    <script src="../../js/knob/jquery.knob.js"></script>
-    <script src="../../js/knob/jquery.appear.js"></script>
-    <script src="../../js/knob/knob-active.js"></script>
-    <script src="../../s/wave/waves.min.js"></script>
-    <script src="../../js/wave/wave-active.js"></script>
-    <script src="../../js/todo/jquery.todo.js"></script>
-    <script src="../../js/plugins.js"></script>
-    <script src="../../js/main.js"></script>
+
+
+        // Your existing code for closing the database connection and displaying the HTML footer
+        mysqli_close($con);
+        ?>
+        <!--Script-->
+        <script src="../../js/vendor/jquery-1.12.4.min.js"></script>
+        <script src="../../s/bootstrap.min.js"></script>
+        <script src="../../js/wow.min.js"></script>
+        <script src="../../js/jquery-price-slider.js"></script>
+        <script src="../../js/owl.carousel.min.js"></script>
+        <script src="../../js/jquery.scrollUp.min.js"></script>
+        <script src="../../js/meanmenu/jquery.meanmenu.js"></script>
+        <script src="../../js/counterup/jquery.counterup.min.js"></script>
+        <script src="../../js/counterup/waypoints.min.js"></script>
+        <script src="../../js/counterup/counterup-active.js"></script>
+        <script src="../../js/scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
+        <script src="../../js/jvectormap/jquery-jvectormap-2.0.2.min.js"></script>
+        <script src="../../js/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+        <script src="../../js/jvectormap/jvectormap-active.js"></script>
+        <script src="../../js/sparkline/jquery.sparkline.min.js"></script>
+        <script src="../../js/sparkline/sparkline-active.js"></script>
+        <script src="../../js/flot/jquery.flot.js"></script>
+        <script src="../../js/flot/jquery.flot.resize.js"></script>
+        <script src="../../s/flot/jquery.flot.pie.js"></script>
+        <script src="../../js/flot/jquery.flot.tooltip.min.js"></script>
+        <script src="../../js/flot/jquery.flot.orderBars.js"></script>
+        <script src="../../js/flot/curvedLines.js"></script>
+        <script src="../../js/flot/flot-active.js"></script>
+        <script src="../../js/knob/jquery.knob.js"></script>
+        <script src="../../js/knob/jquery.appear.js"></script>
+        <script src="../../js/knob/knob-active.js"></script>
+        <script src="../../s/wave/waves.min.js"></script>
+        <script src="../../js/wave/wave-active.js"></script>
+        <script src="../../js/todo/jquery.todo.js"></script>
+        <script src="../../js/plugins.js"></script>
+        <script src="../../js/main.js"></script>
 </body>
 
 </html>
