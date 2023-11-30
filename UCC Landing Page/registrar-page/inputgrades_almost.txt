@@ -1,0 +1,151 @@
+<?php
+session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+$con = mysqli_connect('localhost', 'root', '', 'uccevaluation');
+
+if (!$con) {
+    die("Database connection failed: " . mysqli_connect_error());
+}
+
+$matchingStudentData = [];
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    if (isset($_POST['search_subject'])) {
+        $subjectCode = $_POST['subject_code'];
+        $course = $_POST['course'];
+        $year = $_POST['year'];
+        $section = $_POST['section'];
+
+        // Create placeholders for the subject code and other criteria
+        $criteriaPlaceholders = [];
+
+        for ($i = 1; $i <= 11; $i++) {
+            $criteriaPlaceholders[] = "scode$i = ?";
+        }
+
+        // Build the SQL query
+        $fields = implode(', ', array_map(function ($i) {
+            return "mt$i, ft$i, fg$i";
+        }, range(1, 11)));
+
+        // Create the criteria string by joining the placeholders
+        $criteriaString = implode(' OR ', $criteriaPlaceholders);
+
+        // Prepare and execute the statement
+        $query = "SELECT sno, CONCAT(sname, ', ', fname, ' ', mname) AS student_name, year1, course, section, 
+        CONCAT(sy1, '-', sy2) AS academic_year, $fields
+        FROM 20231stsemcongress
+        WHERE ($criteriaString) AND course = ? AND year1 = ? AND section = ?";
+
+        $criteriaParams = array_fill(0, 11, $subjectCode); // Create an array of 11 subject codes
+
+        // Add course, year, and section to the parameters
+        $criteriaParams[] = $course;
+        $criteriaParams[] = $year;
+        $criteriaParams[] = $section;
+
+        // Prepare and execute the statement
+        $stmt = mysqli_prepare($con, $query);
+
+        if ($stmt) {
+            $paramTypes = str_repeat('s', count($criteriaParams));
+            mysqli_stmt_bind_param($stmt, $paramTypes, ...$criteriaParams);
+
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
+
+            while ($row = mysqli_fetch_assoc($result)) {
+                $matchingStudentData[] = $row;
+            }
+
+            mysqli_stmt_close($stmt);
+        }
+
+        mysqli_close($con);
+    }
+}
+?>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 mt-4">
+            <?php
+            if (isset($_SESSION['message'])) {
+                echo "<h4>" . $_SESSION['message'] . "</h4>";
+                unset($_SESSION['message']);
+            }
+            ?>
+            <div class="card-body">
+                <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+                    <div class="form-group">
+                        <label for="subject_code">Subject Code:</label>
+                        <input type="text" name="subject_code" class="form-control" id="subject_code">
+                    </div>
+                    <div class="form-group">
+                        <label for="course">Course:</label>
+                        <input type="text" name="course" class="form-control" id="course">
+                    </div>
+                    <div class="form-group">
+                        <label for="year">Year:</label>
+                        <input type="text" name="year" class="form-control" id="year">
+                    </div>
+                    <div class="form-group">
+                        <label for="section">Section:</label>
+                        <input type="text" name="section" class="form-control" id="section">
+                    </div>
+
+                    <button type="submit" name="search_subject" class="btn btn-primary">Search</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php if (!empty($matchingStudentData)) : ?>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mt-4">
+                <h2>Matching Student Data:</h2>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Student Number</th>
+                            <th>Student Name</th>
+                            <?php for ($i = 1; $i <= 11; $i++) : ?>
+                                <th>MT<?php echo $i; ?></th>
+                                <th>FT<?php echo $i; ?></th>
+                                <th>FG<?php echo $i; ?></th>
+                            <?php endfor; ?>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($matchingStudentData as $student) : ?>
+                            <tr>
+                                <td><?php echo $student['sno']; ?></td>
+                                <td><?php echo $student['student_name']; ?></td>
+                                <?php for ($i = 1; $i <= 11; $i++) : ?>
+                                    <td><?php echo $student['mt' . $i]; ?></td>
+                                    <td><?php echo $student['ft' . $i]; ?></td>
+                                    <td><?php echo $student['fg' . $i]; ?></td>
+                                <?php endfor; ?>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+
+</body>
+</html>

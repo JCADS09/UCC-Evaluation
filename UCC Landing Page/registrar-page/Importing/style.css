@@ -1,0 +1,11 @@
+.btn-import{
+    position: absolute;
+    margin-left: 89%;
+    top: 100%;
+}
+.input-file{
+    position: absolute;
+    width: 31%;
+    left: 60%;
+    top: 92%;
+}
