@@ -139,6 +139,16 @@ if (isset($_SESSION['table_name'])) {
             border-radius: 4px;
             box-sizing: border-box;
         }
+        .cancel{
+        padding: 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        color: white;
+        border: none;
+        margin-left:8.5%;
+        width:13%;
+        background-color:green;
+    }
     </style>
 </head>
 
@@ -297,9 +307,9 @@ if (isset($_SESSION['table_name'])) {
                                     ?>
                                 </select>
                             </div>
-                            <div style="margin-top:3%;margin-left:6.5%;">
-                                <button type="submit" name="displayTable" class="btn btn-success">Display</button>
-                </form>
+                            <div style="margin-top:3%;margin-left:6.5%;"> 
+    <button type="submit" name="displayTable" class="btn btn-success">Display</button>
+</form>
             </div>
         </div>
     </div>
