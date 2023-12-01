@@ -94,6 +94,7 @@ form.sign-up-form{
     display: grid;
     grid-template-columns: 15% 85%;
     padding: 0 0.4rem;
+    z-index: 100;
 }
 
 .input-field i{
@@ -117,8 +118,12 @@ form.sign-up-form{
     color: #495c81;
     font-weight: 500;
 }
-
-.additional-input-field {
+.hidden-field {
+    visibility: hidden;
+    position: relative;
+  }
+  
+  .additional-input-field {
     max-width: 780px;
     width: 100%;
     margin: 5px 0;
@@ -126,6 +131,8 @@ form.sign-up-form{
     display: grid;
     grid-template-columns: 35% 70%;
     padding: 0 0.4rem;
+    position: relative;
+    z-index: 50; /* Set a higher z-index to make it appear above the hidden field */
   }
   
   .additional-input-field select {
@@ -144,8 +151,10 @@ form.sign-up-form{
     font-weight: 500;
   }
   
+  
 .hidden {
-    visibility: hidden;
+    visibility: hidden !important;
+    position: absolute !important;
 }
 
 .btn{
@@ -161,6 +170,7 @@ form.sign-up-form{
     margin: 10px 0;
     cursor: pointer;
     transition: 0.5s;
+   
 }
 
 .btn:hover{

@@ -1,9 +1,10 @@
-
-<!DOCTYPE html>
-<html lang="EN">
-    <?php
+<?php
+    require_once('db.php');
     session_start();
     ?>
+<!DOCTYPE html>
+<html lang="EN">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -292,6 +293,7 @@ $result = mysqli_query($con, $query);
         <script src="../../js/main.js"></script>
         <script>
         function populateCourses() {
+        
     var selectedDepartment = document.getElementById("branch").value;
 
     // Fetch courses based on the selected department

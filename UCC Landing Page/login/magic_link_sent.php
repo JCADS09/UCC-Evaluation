@@ -7,15 +7,21 @@ $name = $_SESSION["name"];
 $userEmail = $_SESSION['magic_link_email'];
 include('../connect/connection.php');
 
-$query = "SELECT roles FROM login WHERE email = ?";
+// Assuming you have retrieved the verification status from the database
+$query = "SELECT verified, roles FROM login WHERE email = ?";
 $stmt = mysqli_prepare($connect, $query);
+
 if ($stmt) {
     mysqli_stmt_bind_param($stmt, "s", $userEmail);
-    mysqli_stmt_bind_result($stmt, $userRoles);
+    mysqli_stmt_bind_result($stmt, $databaseVerified, $userRoles);
     mysqli_stmt_execute($stmt);
+
     if (mysqli_stmt_fetch($stmt)) {
         $role_name = $userRoles;
         $authenticated = true;
+
+        // Set $_SESSION["verified"] based on the database value
+        $_SESSION["verified"] = ($databaseVerified == 1) ? 1 : 0;
     } else {
         echo "User not found or has no roles.";
     }
@@ -286,16 +292,17 @@ button:hover {
             Please check it. Thank you</p>";
         }
         ?>
-      <div id="timer">Redirecting in 15 seconds...</div>
+      <div id="timer">Redirecting in 60 seconds...</div>
       <?php echo "Role Name: " . $role_name; ?>
       <br><br>
     <div class="loader">
     <div class="justify-content-center jimu-primary-loading"></div>
     </div>
-      <div class="actions">
-        <button class="continue">
-            Continue
-        </button>
+    <div class="actions">
+    <button class="continue" onclick="checkVerification()">
+        Continue
+    </button>
+</div>
     </div>
 </div>
 
@@ -303,42 +310,63 @@ button:hover {
     
     
    
-   
-    <script>
-        var count = 15;
-        var timerElement = document.getElementById("timer");
+<?php
+$isVerified = isset($_SESSION["verified"]) ? $_SESSION["verified"] : 0; // Set a default value if "verified" key is not set
+?>
+      <script>
+          var count = 60;
+          var timerElement = document.getElementById("timer");
 
-        var role = "<?php echo $role_name; ?>";
-
-        function updateTimer() {
-            timerElement.textContent = "Redirecting in " + count + " seconds...";
-            if (count <= 0) {
-                
-                if (role === '') {
-                    window.location.href = "../index.php";
-                } else if (role === 'MIS') {
-                    window.location.href = "../misnav.php";
-                } else if (role === 'COORDINATOR') {
-                    window.location.href = "../coornav.php";
-                } else if (role === 'EVALUATOR') {
-                    window.location.href = "../evaluatornav.php";
-                } else if (role === 'REGISTRAR') {
-                    window.location.href = "../registrarnav.php";
-                } else if (role === 'DEAN'||role === 'HEAD') {
-                    window.location.href = "../deptheadnav.php";
-                } else {
-                    // Handle other roles or scenarios as needed.
-                    // For example, redirect them to a default page.
-                    window.location.href = "default_page.php";
-                }
-            } else {
-                count--;
-                setTimeout(updateTimer, 1000);
-            }
+          var role = "<?php echo $role_name; ?>";
+          function checkVerification() {
+        if (isVerified === 1) {
+          if (role === '') {
+                      window.location.href = "../index.php";
+                  } else if (role === 'MIS') {
+                      window.location.href = "../misnav.php";
+                  } else if (role === 'COORDINATOR') {
+                      window.location.href = "../coornav.php";
+                  } else if (role === 'EVALUATOR') {
+                      window.location.href = "../evaluatornav.php";
+                  } else if (role === 'REGISTRAR') {
+                      window.location.href = "../registrarnav.php";
+                  } else if (role === 'DEAN'||role === 'HEAD') {
+                      window.location.href = "../deptheadnav.php";
+                  } else {
+                      window.location.href = "../index.php";
+                  }
+        } else {
+          updateTimer();
+          
         }
+    }
+          function updateTimer() {
+              timerElement.textContent = "Redirecting in " + count + " seconds...";
+              if (count <= 0) {
+                  
+                  if (role === '') {
+                      window.location.href = "../index.php";
+                  } else if (role === 'MIS') {
+                      window.location.href = "../misnav.php";
+                  } else if (role === 'COORDINATOR') {
+                      window.location.href = "../coornav.php";
+                  } else if (role === 'EVALUATOR') {
+                      window.location.href = "../evaluatornav.php";
+                  } else if (role === 'REGISTRAR') {
+                      window.location.href = "../registrarnav.php";
+                  } else if (role === 'DEAN'||role === 'HEAD') {
+                      window.location.href = "../deptheadnav.php";
+                  } else {
+                      window.location.href = "../index.php";
+                  }
+              } else {
+                  count--;
+                  setTimeout(updateTimer, 1000);
+              }
+          }
 
-        updateTimer();
-    </script>
+          updateTimer();
+      </script>
 </body>
 </html>
 <?php
