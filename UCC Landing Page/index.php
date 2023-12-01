@@ -158,8 +158,8 @@ mysqli_close($con);
 
                     <div class="additional-input-field hidden">
                         <div class="dropdown">
-                            <label for="branch">College Department:</label>
-                            <select id="branch" name="branch" onchange="populateCourses()">
+                            <label for="dep">College Department:</label>
+                            <select id="dep" name="dep" onchange="populateCourses()">
                                 <option value="" selected disabled>Select College Department</option>
                                 <?php echo $options; ?>
                             </select>
@@ -232,7 +232,7 @@ mysqli_close($con);
     <script>
         function populateCourses() {
             // Get the selected college department
-            var selectedDepartment = document.getElementById("branch").value;
+            var selectedDepartment = document.getElementById("dep").value;
 
             // Fetch courses based on the selected department
             var xhttp = new XMLHttpRequest();
@@ -283,7 +283,7 @@ mysqli_close($con);
         });
     </script>
 
-    <script>
+    <!-- <script>
         document.addEventListener("DOMContentLoaded", function () {
             const clickableImage = document.querySelector(".clickable-image");
             const fileInput = document.getElementById("profilepic");
@@ -308,7 +308,7 @@ mysqli_close($con);
                 }
             });
         });
-    </script>
+    </script> -->
 
 </body>
 
