@@ -153,8 +153,8 @@ form.sign-up-form{
   
   
 .hidden {
-    visibility: hidden !important;
-    position: absolute !important;
+    visibility: hidden;
+    position: absolute;
 }
 
 .btn{
