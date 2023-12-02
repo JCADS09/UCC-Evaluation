@@ -259,6 +259,7 @@ $result = mysqli_query($con, $query);
                     echo '<td>' . $row['section'] . '</td>';
                     echo '<td>' . $row['status'] . '</td>';
                     echo '<td><center><a class="btnView" href="../gradingsheet.php?id=' . $row['sno'] . '"> Summary</a></center></td>';
+                    echo '<td><center><a class="btnView" href="../scholastic.php?id=' . $row['sno'] . '"> Scholastic</a></center></td>';
                     echo '</tr>';
                     $count++;
                 }

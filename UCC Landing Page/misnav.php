@@ -12,7 +12,8 @@ $conn = mysqli_connect($servername, $username, $password, $dbname);
 if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
-
+session_start();
+$name = $_SESSION["name"];
 
 ?>
 <!doctype html>
@@ -26,28 +27,28 @@ if (!$conn) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!--links-->
-        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
-        <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,700,900" rel="stylesheet">
-        <link rel="stylesheet" href="css/bootstrap.min.css">
-        <link rel="stylesheet" href="css/font-awesome.min.css">
-        <link rel="stylesheet" href="css/owl.carousel.css">
-        <link rel="stylesheet" href="css/owl.transitions.css">
-        <link rel="stylesheet" href="css/animate.css">
-        <link rel="stylesheet" href="css/normalize.css">
-        <link rel="stylesheet" href="css/scrollbar/jquery.mCustomScrollbar.min.css">
-        <link rel="stylesheet" href="css/jvectormap/jquery-jvectormap-2.0.3.css">
-        <link rel="stylesheet" href="css/notika-custom-icon.css">
-        <link rel="stylesheet" href="css/main.css">
-        <link rel="stylesheet" href="css/wave/waves.min.css">
-        <link rel="stylesheet" href="style.css">
-        <link rel="stylesheet" href="css/responsive.css">
-        <link rel="stylesheet" href="topbarcss/topbar.css">
-        <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,700,900" rel="stylesheet">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/owl.carousel.css">
+    <link rel="stylesheet" href="css/owl.transitions.css">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/scrollbar/jquery.mCustomScrollbar.min.css">
+    <link rel="stylesheet" href="css/jvectormap/jquery-jvectormap-2.0.3.css">
+    <link rel="stylesheet" href="css/notika-custom-icon.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/wave/waves.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="topbarcss/topbar.css">
+    <script src="js/vendor/modernizr-2.8.3.min.js"></script>
     <!--End links-->
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-        google.charts.load('current', {'packages': ['bar']});
+        google.charts.load('current', { 'packages': ['bar'] });
         google.charts.setOnLoadCallback(drawChart);
 
         function drawChart() {
@@ -94,20 +95,20 @@ if (!$conn) {
                 $total_irregularba = $irregularDataBA['total_irregularba'];
 
 
-               
+
                 ?>
 
                 ['College of Liberal Arts and Sciences', <?php echo $total_bsclas; ?>, <?php echo $total_regular; ?>, <?php echo $total_irregular ?>],
                 ['College of Business and Accountancy', <?php echo $total_ba; ?>, <?php echo $total_regularba; ?>, <?php echo $total_irregularba ?>],
 
-             
+
 
             ]);
 
             var options = {
                 chart: {
                     //title: 'Bachelor of Science in Information System',
-                   // subtitle: 'up to 2023',
+                    // subtitle: 'up to 2023',
                 },
                 bars: 'vertical', // Required for Material Bar Charts.
                 colors: ['#3366cc', '#109618', '#ff9900'] // Set custom colors: blue, green, yellow
@@ -119,41 +120,100 @@ if (!$conn) {
         }
     </script>
 </head>
+<style>
+    /* Style The Dropdown Button */
+    .dropbtn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 16px;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+    }
+
+    /* The container <div> - needed to position the dropdown content */
+    .dropdown {
+        position: relative;
+        display: inline-block;
+        left: 90%;
+    }
+
+    /* Dropdown Content (Hidden by Default) */
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+    }
+
+    /* Links inside the dropdown */
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+
+    /* Change color of dropdown links on hover */
+    .dropdown-content a:hover {
+        background-color: #f1f1f1
+    }
+
+    /* Show the dropdown menu on hover */
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    /* Change the background color of the dropdown button when the dropdown content is shown */
+    .dropdown:hover .dropbtn {
+        background-color: #3e8e41;
+    }
+</style>
 
 <body>
 
-        <!-- Start Header Top Area -->
+    <!-- Start Header Top Area -->
 
-            <div class="header-top-area" style="background-color: rgb(17, 112, 22);">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                            <div class="logo-area" style="display: flex; align-items: center;">
-                                <img src="system-img/check.png" width="45" height="45"> 
-                                <span style="color: white; font-weight: bold; font-size: 24px; margin-left: 10px;">UCC EVALUATION</span>
-                            </div>
-                        </div>
-                        <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-                            <div class="header-top-menu">
-                                <ul class="nav navbar-nav notika-top-nav">
-                                    <li class="nav-item dropdown">      
-                                    </li>
-                                </ul>
-                            </div>
+    <div class="header-top-area" style="background-color: rgb(17, 112, 22);">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                    <div class="logo-area" style="display: flex; align-items: center;">
+                        <img src="system-img/check.png" width="45" height="45">
+                        <span style="color: white; font-weight: bold; font-size: 24px; margin-left: 10px;">UCC
+                            EVALUATION</span>
+                    </div>
+                </div>
+                <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                    <div class="header-top-menu">
+
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropbtn">
+                            <?php echo $name; ?> &nbsp; ▼
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="">Notification</a>
+                            <a id="top" href="#">Activity Log</a>
+                            <a id="middle" href="#">Account Settings</a>
+                            <a href="index.php" class="btn btn-primary">Logout</a>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
         <!-- End Header Top Area -->
 
-    <!-- Main Menu area start-->
-    <!-- <a href="index.php" class="btn btn-primary">Logout</a> -->
-                    </div>
-                </div>
-            </div>
+        <!-- Main Menu area start-->
+        <!-- <a href="index.php" class="btn btn-primary">Logout</a> -->
+    </div>
+    </div>
+    </div>
 
-        <!-- End Header Top Area -->
+    <!-- End Header Top Area -->
 
     <!-- Main Menu area start-->
     <div class="main-menu-area mg-tb-40">
@@ -161,16 +221,19 @@ if (!$conn) {
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <ul class="nav nav-tabs notika-menu-wrap menu-it-icon-pro">
-                        <li><a style="background-color:#ff8e1c;color:white;" href="misnav.php"><img src="system-img/home.png" width="28" height="27"></i> Dashboard</a>
+                        <li><a style="background-color:#ff8e1c;color:white;" href="misnav.php"><img
+                                    src="system-img/home.png" width="28" height="27"></i> Dashboard</a>
                         </li>
                         <li>
                             <a href="mis-page/MIS_StudentData/studentdata.php">
                                 <img src="system-img/student.png" width="25" height="25"> Students
                             </a>
                         </li>
-                        <li><a data-toggle="tab" href="#M-Accounts"><img src="system-img/settings.png" width="22" height="22"> Accounts</a>
-                        </li> 
-                        <li><a data-toggle="tab" href="#M-campus"><img src="system-img/campus.png" width="34" height="25"></i> Campus</a>
+                        <li><a data-toggle="tab" href="#M-Accounts"><img src="system-img/settings.png" width="22"
+                                    height="22"> Accounts</a>
+                        </li>
+                        <li><a data-toggle="tab" href="#M-campus"><img src="system-img/campus.png" width="34"
+                                    height="25"></i> Campus</a>
                         </li>
                         <!-- <li>    
                             <a href="schedule/index.php">
@@ -180,12 +243,12 @@ if (!$conn) {
                     </ul>
                     <div class="tab-content custom-menu-content">
                         <div id="M-Accounts" class="tab-pane notika-tab-menu-bg animated flipInX">
-                                <ul class="notika-main-menu-dropdown">
-                                    <li><a href="mis-page/crud/index.php">Request</a>
-                                    </li>
-                                    <li><a href="mis-page/crud/users.php">Users</a>
-                                    </li>                                  
-                                </ul>
+                            <ul class="notika-main-menu-dropdown">
+                                <li><a href="mis-page/crud/index.php">Request</a>
+                                </li>
+                                <li><a href="mis-page/crud/users.php">Users</a>
+                                </li>
+                            </ul>
                         </div>
                         <div id="M-campus" class="tab-pane notika-tab-menu-bg animated flipInX">
                             <ul class="notika-main-menu-dropdown">
@@ -194,22 +257,23 @@ if (!$conn) {
                                 <li><a href="mis-page/managecampus.php">Manage Campus</a>
                                 </li>
                             </ul>
-                         </div>  
-                         </div>  
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    </div>
     <!-- Main Menu area End-->
 
-            <!-- Start Status area -->
-            <div class="notika-status-area">
-                <div class="container">
-                    <div class="row">
+    <!-- Start Status area -->
+    <div class="notika-status-area">
+        <div class="container">
+            <div class="row">
 
-                    <?php
-                    function getTotalRowCount($conn, $table) {
+                <?php
+                function getTotalRowCount($conn, $table)
+                {
                     $sql = "SELECT COUNT(*) as count FROM $table";
                     $result = $conn->query($sql);
                     if ($result->num_rows > 0) {
@@ -220,106 +284,117 @@ if (!$conn) {
                     }
 
 
+                }
+
+                function getCampusRowCount($conn, $table)
+                {
+                    $sql = "SELECT COUNT(*) as count FROM $table";
+                    $result = $conn->query($sql);
+                    if ($result->num_rows > 0) {
+                        $row = $result->fetch_assoc();
+                        return $row['count'];
+                    } else {
+                        return 0;
                     }
 
-                    function getCampusRowCount($conn, $table) {
-                        $sql = "SELECT COUNT(*) as count FROM $table";
-                        $result = $conn->query($sql);
-                        if ($result->num_rows > 0) {
-                            $row = $result->fetch_assoc();
-                            return $row['count'];
-                        } else {
-                            return 0;
-                        }
-    
-    
-                        }
+
+                }
 
 
 
-                    function getAccountStatusCount($conn, $table, $statusValue = 0) {
-                        $sql = "SELECT COUNT(*) as count FROM $table WHERE account_status = $statusValue";
-                        
-                        $result = $conn->query($sql);
-                    
-                        if ($result->num_rows > 0) {
-                            $row = $result->fetch_assoc();
-                            return $row['count'];
-                        } else {
-                            return 0;
-                        }
+                function getAccountStatusCount($conn, $table, $statusValue = 0)
+                {
+                    $sql = "SELECT COUNT(*) as count FROM $table WHERE account_status = $statusValue";
+
+                    $result = $conn->query($sql);
+
+                    if ($result->num_rows > 0) {
+                        $row = $result->fetch_assoc();
+                        return $row['count'];
+                    } else {
+                        return 0;
                     }
+                }
 
-                    function getAccountACTIVE($conn, $table, $statusValue = 1) {
-                        $sql = "SELECT COUNT(*) as count FROM $table WHERE account_status = $statusValue";
-                        
-                        $result = $conn->query($sql);
-                    
-                        if ($result->num_rows > 0) {
-                            $row = $result->fetch_assoc();
-                            return $row['count'];
-                        } else {
-                            return 0;
-                        }
-                    }                  
-                    // Call the function to get the count where account_status = 0
+                function getAccountACTIVE($conn, $table, $statusValue = 1)
+                {
+                    $sql = "SELECT COUNT(*) as count FROM $table WHERE account_status = $statusValue";
+
+                    $result = $conn->query($sql);
+
+                    if ($result->num_rows > 0) {
+                        $row = $result->fetch_assoc();
+                        return $row['count'];
+                    } else {
+                        return 0;
+                    }
+                }
+                // Call the function to get the count where account_status = 0
                 $totalAccountStatus0 = getAccountStatusCount($conn, "login");
                 $totalAccountACTIVE = getAccountACTIVE($conn, "login");
                 $totalCampus = getCampusRowCount($conn, "campus");
                 $totalRows = getTotalRowCount($conn, "202220232ndsemcongress");
                 ?>
                 <a href="mis-page/MIS_StudentData/studentdata.php">
-                        <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-                            <div class="wb-traffic-inner notika-shadow sm-res-mg-t-30 tb-res-mg-t-30">
-                                <div class="website-traffic-ctn">
-                                    <h2><span class="counter"><?php echo $totalRows; ?></span></h2>
-                                    <p>Students</p>
-                                </div>
-                                <div class="sparkline-bar-stats1">9,4,8,6,5,6,4,8,3,5,9,5</div>
-                            </div>
-                        </div>
-                </a>
-
-                        <a href="mis-page/crud/users.php">
-                        <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-                            <div class="wb-traffic-inner notika-shadow sm-res-mg-t-30 tb-res-mg-t-30">
-                                <div class="website-traffic-ctn">
-                                    <h2><span class="counter"><?php echo  $totalAccountACTIVE;?></span></h2>
-                                    <p>User</p>
-                                </div>
-                                <div class="sparkline-bar-stats2">1,4,8,3,5,6,4,8,3,3,9,5</div>
-                            </div>
-                        </div>
-                        </a>
-
-                        <a href="mis-page/managecampus.php">
-                        <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12" >
-                            <div class="wb-traffic-inner notika-shadow sm-res-mg-t-30 tb-res-mg-t-30 dk-res-mg-t-30">
-                            
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                        <div class="wb-traffic-inner notika-shadow sm-res-mg-t-30 tb-res-mg-t-30">
                             <div class="website-traffic-ctn">
-                                    <h2><span class="counter"><?php echo $totalCampus; ?></span></h2>
-                                    
-                                    <p>Campus</p>
-                                </div>
-                                <div class="sparkline-bar-stats3">4,2,8,2,5,6,3,8,3,5,9,5</div>
+                                <h2><span class="counter">
+                                        <?php echo $totalRows; ?>
+                                    </span></h2>
+                                <p>Students</p>
                             </div>
+                            <div class="sparkline-bar-stats1">9,4,8,6,5,6,4,8,3,5,9,5</div>
                         </div>
-                        </a>
-                        <a href="mis-page/crud/index.php">
-                        <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-                            <div class="wb-traffic-inner notika-shadow sm-res-mg-t-30 tb-res-mg-t-30 dk-res-mg-t-30">
-                                <div class="website-traffic-ctn">
-                                    <h2><span class="counter"><?php echo $totalAccountStatus0; ?></span></h2>
-                                    <p>Account Request</p>
-                                </div>
-                                <div class="sparkline-bar-stats4">2,4,8,4,5,7,4,7,3,5,7,5</div>
-                            </div>
-                        </div>
-                </a>
                     </div>
-                </div>
+                </a>
+
+                <a href="mis-page/crud/users.php">
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                        <div class="wb-traffic-inner notika-shadow sm-res-mg-t-30 tb-res-mg-t-30">
+                            <div class="website-traffic-ctn">
+                                <h2><span class="counter">
+                                        <?php echo $totalAccountACTIVE; ?>
+                                    </span></h2>
+                                <p>User</p>
+                            </div>
+                            <div class="sparkline-bar-stats2">1,4,8,3,5,6,4,8,3,3,9,5</div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="mis-page/managecampus.php">
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                        <div class="wb-traffic-inner notika-shadow sm-res-mg-t-30 tb-res-mg-t-30 dk-res-mg-t-30">
+
+                            <div class="website-traffic-ctn">
+                                <h2><span class="counter">
+                                        <?php echo $totalCampus; ?>
+                                    </span></h2>
+
+                                <p>Campus</p>
+                            </div>
+                            <div class="sparkline-bar-stats3">4,2,8,2,5,6,3,8,3,5,9,5</div>
+                        </div>
+                    </div>
+                </a>
+                <a href="mis-page/crud/index.php">
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                        <div class="wb-traffic-inner notika-shadow sm-res-mg-t-30 tb-res-mg-t-30 dk-res-mg-t-30">
+                            <div class="website-traffic-ctn">
+                                <h2><span class="counter">
+                                        <?php echo $totalAccountStatus0; ?>
+                                    </span></h2>
+                                <p>Account Request</p>
+                            </div>
+                            <div class="sparkline-bar-stats4">2,4,8,4,5,7,4,7,3,5,7,5</div>
+                        </div>
+                    </div>
+                </a>
             </div>
-        <!-- End Status area-->
+        </div>
+    </div>
+    <!-- End Status area-->
 
     <!-- Start Sale Statistic area-->
     <div class="sale-statistic-area">
@@ -327,24 +402,26 @@ if (!$conn) {
             <div class="row">
 
 
-            
-            <?php
-                    function getRegularCount($conn, $table, $statusColumn, $statusValue) {
-                        $sql = "SELECT COUNT(*) as count FROM $table WHERE $statusColumn = '$statusValue'";
-                        $result = $conn->query($sql);
-                        if ($result->num_rows > 0) {
-                            $row = $result->fetch_assoc();
-                            return $row['count'];
-                        } else {
-                            return 0;
-                        }
-                    }
 
-                    // Call the function to get the regular count
-                    $regularCount = getIRRegularCount($conn, "202220232ndsemcongress", "status1", "REGULAR");
-                    
-                                        
-                    function getIRRegularCount($conn, $table, $statusColumn, $statusValue) {
+                <?php
+                function getRegularCount($conn, $table, $statusColumn, $statusValue)
+                {
+                    $sql = "SELECT COUNT(*) as count FROM $table WHERE $statusColumn = '$statusValue'";
+                    $result = $conn->query($sql);
+                    if ($result->num_rows > 0) {
+                        $row = $result->fetch_assoc();
+                        return $row['count'];
+                    } else {
+                        return 0;
+                    }
+                }
+
+                // Call the function to get the regular count
+                $regularCount = getIRRegularCount($conn, "202220232ndsemcongress", "status1", "REGULAR");
+
+
+                function getIRRegularCount($conn, $table, $statusColumn, $statusValue)
+                {
                     $sql = "SELECT COUNT(*) as count FROM $table WHERE $statusColumn = '$statusValue'";
                     $result = $conn->query($sql);
 
@@ -365,11 +442,11 @@ if (!$conn) {
                         <div class="curved-inner-pro">
                             <div class="curved-ctn">
                                 <h2>Enrolled Students</h2>
-                               
+
                             </div>
                         </div>
-                       <!--CHART-->
-                       <div id="barchart_material" style="width: 800px; height: 400px;"></div> 
+                        <!--CHART-->
+                        <div id="barchart_material" style="width: 800px; height: 400px;"></div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-4 col-sm-5 col-xs-12">
@@ -378,11 +455,13 @@ if (!$conn) {
                             <h2>Students Status</h2>
                             <p>of University of Caloocan City</p>
                         </div>
-						<div class="dash-widget-visits"></div>
+                        <div class="dash-widget-visits"></div>
 
                         <div class="past-statistic-an">
                             <div class="past-statistic-ctn">
-                                <h3><span class="counter"><?php echo $regularCount; ?></span></h3>
+                                <h3><span class="counter">
+                                        <?php echo $regularCount; ?>
+                                    </span></h3>
                                 <p>Regular</p>
                             </div>
                             <div class="past-statistic-graph">
@@ -392,7 +471,9 @@ if (!$conn) {
 
                         <div class="past-statistic-an">
                             <div class="past-statistic-ctn">
-                                <h3><span class="counter"><?php echo $irregularCount ?></span></h3>
+                                <h3><span class="counter">
+                                        <?php echo $irregularCount ?>
+                                    </span></h3>
                                 <p>Irregular</p>
                             </div>
                             <div class="past-statistic-graph">
@@ -414,7 +495,7 @@ if (!$conn) {
         </div>
     </div>
     <!-- End Sale Statistic area-->
-    
+
 
 
     <!--script-->

@@ -19,9 +19,6 @@ if ($stmt) {
     if (mysqli_stmt_fetch($stmt)) {
         $role_name = $userRoles;
         $authenticated = true;
-
-        // Set $_SESSION["verified"] based on the database value
-        $_SESSION["verified"] = ($databaseVerified == 1) ? 1 : 0;
     } else {
         echo "User not found or has no roles.";
     }
@@ -43,6 +40,38 @@ if ($authenticated && $result) {
     $_SESSION["profile_pic"] = $user["profile_pic"];
 }
 
+try {
+  $dbServername = "localhost"; 
+  $dbUsername = "root";
+  $dbPassword = "";
+  $dbName = "uccevaluation";
+  $pdo = new PDO("mysql:host=$dbServername;dbname=$dbName", $dbUsername, $dbPassword);
+
+  // Set the PDO error mode to exception
+  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+  // Replace 'example@email.com' with the actual email you want to verify
+  $emailToVerify = $userEmail;
+
+  // Prepare and execute the SQL query
+  $stmt = $pdo->prepare("SELECT account_status FROM login WHERE email = :email");
+  $stmt->bindParam(':email', $emailToVerify);
+  $stmt->execute();
+
+  // Fetch the result
+  $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+  if ($result) {
+    $verificationStatus = $result['account_status'];
+      //echo "Verification status for $emailToVerify: " . $result['account_status'];
+  }
+  
+  else {
+      echo "Email not found in the database.";
+  }
+} catch (PDOException $e) {
+  echo "Connection failed: " . $e->getMessage();
+}
 mysqli_close($connect);
 
 // Capture output buffer
@@ -310,63 +339,64 @@ button:hover {
     
     
    
-<?php
-$isVerified = isset($_SESSION["verified"]) ? $_SESSION["verified"] : 0; // Set a default value if "verified" key is not set
-?>
-      <script>
-          var count = 60;
-          var timerElement = document.getElementById("timer");
+<!-- ... previous HTML code ... -->
 
-          var role = "<?php echo $role_name; ?>";
-          function checkVerification() {
-        if (isVerified === 1) {
-          if (role === '') {
-                      window.location.href = "../index.php";
-                  } else if (role === 'MIS') {
-                      window.location.href = "../misnav.php";
-                  } else if (role === 'COORDINATOR') {
-                      window.location.href = "../coornav.php";
-                  } else if (role === 'EVALUATOR') {
-                      window.location.href = "../evaluatornav.php";
-                  } else if (role === 'REGISTRAR') {
-                      window.location.href = "../registrarnav.php";
-                  } else if (role === 'DEAN'||role === 'HEAD') {
-                      window.location.href = "../deptheadnav.php";
-                  } else {
-                      window.location.href = "../index.php";
-                  }
+<script>
+    var count = 60;
+    var timerElement = document.getElementById("timer");
+    var verificationStatus = <?php echo json_encode($verificationStatus); ?>; // Pass PHP variable to JavaScript
+
+    var role = "<?php echo $role_name; ?>";
+
+    function checkVerification() {
+        if (verificationStatus === 1) {
+            if (role === '') {
+                window.location.href = "../index.php";
+            } else if (role === 'MIS') {
+                window.location.href = "../misnav.php";
+            } else if (role === 'COORDINATOR') {
+                window.location.href = "../coornav.php";
+            } else if (role === 'EVALUATOR') {
+                window.location.href = "../evaluatornav.php";
+            } else if (role === 'REGISTRAR') {
+                window.location.href = "../registrarnav.php";
+            } else if (role === 'DEAN' || role === 'HEAD') {
+                window.location.href = "../deptheadnav.php";
+            } else {
+                window.location.href = "../index.php";
+            }
         } else {
-          updateTimer();
-          
+            updateTimer();
         }
     }
-          function updateTimer() {
-              timerElement.textContent = "Redirecting in " + count + " seconds...";
-              if (count <= 0) {
-                  
-                  if (role === '') {
-                      window.location.href = "../index.php";
-                  } else if (role === 'MIS') {
-                      window.location.href = "../misnav.php";
-                  } else if (role === 'COORDINATOR') {
-                      window.location.href = "../coornav.php";
-                  } else if (role === 'EVALUATOR') {
-                      window.location.href = "../evaluatornav.php";
-                  } else if (role === 'REGISTRAR') {
-                      window.location.href = "../registrarnav.php";
-                  } else if (role === 'DEAN'||role === 'HEAD') {
-                      window.location.href = "../deptheadnav.php";
-                  } else {
-                      window.location.href = "../index.php";
-                  }
-              } else {
-                  count--;
-                  setTimeout(updateTimer, 1000);
-              }
-          }
 
-          updateTimer();
-      </script>
+    function updateTimer() {
+        timerElement.textContent = "Redirecting in " + count + " seconds...";
+        if (count <= 0) {
+            if (role === '') {
+                window.location.href = "../index.php";
+            } else if (role === 'MIS') {
+                window.location.href = "../misnav.php";
+            } else if (role === 'COORDINATOR') {
+                window.location.href = "../coornav.php";
+            } else if (role === 'EVALUATOR') {
+                window.location.href = "../evaluatornav.php";
+            } else if (role === 'REGISTRAR') {
+                window.location.href = "../registrarnav.php";
+            } else if (role === 'DEAN' || role === 'HEAD') {
+                window.location.href = "../deptheadnav.php";
+            } else {
+                window.location.href = "../index.php";
+            }
+        } else {
+            count--;
+            setTimeout(updateTimer, 1000);
+        }
+    }
+
+    updateTimer();
+</script>
+
 </body>
 </html>
 <?php
