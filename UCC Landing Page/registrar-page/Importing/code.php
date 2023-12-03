@@ -46,6 +46,16 @@ session_start();
     body {
         overflow-x: hidden;
     }
+    .cancel{
+        padding: 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        color: white;
+        border: none;
+        margin-left:6.5%;
+        width:11%;
+        background-color:green;
+    }
 </style>
 
 <body>
@@ -128,6 +138,9 @@ session_start();
                     }
                     ?>
                     <div class="card-body">
+                    <div>
+<a  href="../inputgrades.php"><label class="cancel">Manual Grades</label></a>
+</div>
                         <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data">
                             <div class="row p-t-20" style="margin-left:5%;">
                                 <div class="col-md-10">
@@ -367,7 +380,7 @@ session_start();
                                 $checkResult = mysqli_query($con, $checkQuery);
 
                                 if ($checkResult && mysqli_num_rows($checkResult) > 0) {
-                                    echo "Table Name: $tableName";
+                                    
 
                                     break;
                                 }
@@ -399,7 +412,6 @@ session_start();
                                             $checkResult = mysqli_query($con, $checkQuery);
 
                                             if ($checkResult && mysqli_num_rows($checkResult) > 0) {
-                                                echo "Column Name for Subject Code $subjectCode and Student Number $studentNumber: $columnName";
 
                                                 // Set columns based on the found column
                                                 $mtColumn = 'mt' . substr($columnName, -1);

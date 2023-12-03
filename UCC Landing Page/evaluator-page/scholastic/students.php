@@ -318,7 +318,7 @@ $result = mysqli_query($con, $query);
         }
     };
 
-    xhttp.open("GET", "get_courses.php?department=" + selectedDepartment, true);
+    xhttp.open("GET", "get_course.php?department=" + selectedDepartment, true);
     xhttp.send();
 }
 </script>

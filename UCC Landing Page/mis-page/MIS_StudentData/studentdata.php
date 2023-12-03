@@ -281,7 +281,9 @@ if (isset($_SESSION['table_name'])) {
                         </div>
                 </div>
                 </form>
-
+                <div>
+<a  href="../addstudent.php"><label class="cancel">Add New Student</label></a>
+</div>
                 <form method="POST" action="" class="table-select-form">
                     <div class="dropdown">
                         <div class="row p-t-20" style="margin-left:7%;">

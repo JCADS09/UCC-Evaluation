@@ -95,7 +95,8 @@ mysqli_close($con);
 
     <meta http-equiv="x-content-type-options" content="nosniff">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SignIn__SignUp__Landing__Page</title>
+    <title>Login</title>
+    <link rel="shortcut icon" type="image/x-icon" href="system-img/check.png">
     <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="css/app.css">
     <script src="login/modal.js"></script>

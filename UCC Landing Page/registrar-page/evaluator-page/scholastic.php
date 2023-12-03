@@ -184,7 +184,7 @@ $user = $_SESSION['id'];
 		  </div>
 		  <div class="row">
 		  <div class="col-md-12">
-		  <center><p><b><h4>SUMMARY OF GRADES </h4></b></p></center><br>
+		  <center><p><b><h4>SCHOLASTIC</h4></b></p></center><br>
 		  </div>
           </div>
           <div class="row">
@@ -200,8 +200,8 @@ $user = $_SESSION['id'];
                 ?>
                     <tr>
                         <td style="width:600px;font-size:15px;font-family:arial;">
-                        <u><h style="font-size:15px"><?php echo $row['semester'] ?></h></u>
-                            <b><label for="">&nbsp&nbsp&nbsp&nbsp&nbspSemester&nbsp&nbsp&nbsp&nbsp&nbsp</label></b>
+                        
+                            <b><label for="" style="margin-left:71%;">A.Y.:&nbsp&nbsp&nbsp&nbsp&nbsp</label></b>
                             <u><h style="font-size:15px"><?php echo $row['sy1']. ' - ' .$row['sy2'] ?></u></h>
                             <br>
                             <br>

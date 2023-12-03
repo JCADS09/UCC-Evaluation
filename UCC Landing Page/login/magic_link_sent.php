@@ -80,7 +80,8 @@ ob_start();
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Magic Link Sent</title>
+<title>Login Confirmation</title>
+    <link rel="shortcut icon" type="image/x-icon" href="system-img/check.png">
     <meta charset="UTF-8">
 </head>
 <style>
@@ -321,7 +322,7 @@ button:hover {
             Please check it. Thank you</p>";
         }
         ?>
-      <div id="timer">Redirecting in 60 seconds...</div>
+      <div id="timer">Redirecting in 10 seconds...</div>
       <?php echo "Role Name: " . $role_name; ?>
       <br><br>
     <div class="loader">
@@ -342,7 +343,7 @@ button:hover {
 <!-- ... previous HTML code ... -->
 
 <script>
-    var count = 60;
+    var count = 10;
     var timerElement = document.getElementById("timer");
     var verificationStatus = <?php echo json_encode($verificationStatus); ?>; // Pass PHP variable to JavaScript
 

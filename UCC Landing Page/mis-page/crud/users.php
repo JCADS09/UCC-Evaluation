@@ -74,7 +74,7 @@
                             <img src="../../system-img/student.png" width="25" height="25"> Students
                         </a>
                         </li>
-                        <li class="active"><a data-toggle="tab" href="#M-Accounts" style="background-color:#ff8e1c;color:white;"><img src="../../system-img/settings.png" width="22" height="22"></i>Accounts</a>
+                        <li><a data-toggle="tab" href="#M-Accounts" style="background-color:#ff8e1c;color:white;"><img src="../../system-img/settings.png" width="22" height="22"></i>Accounts</a>
                         </li>
                         <li><a data-toggle="tab" href="#M-campus"><img src="../../system-img/campus.png" width="34" height="25"></i>Campus</a>
                         </li>                         

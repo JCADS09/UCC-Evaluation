@@ -113,7 +113,7 @@
                     <div class="row">
                         <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                             <div class="logo-area" style="display: flex; align-items: center;">
-                                <img src="../../system-img/check.png" width="45" height="45"> 
+                                <img src="../../../system-img/check.png" width="45" height="45"> 
                                 <span style="color: white; font-weight: bold; font-size: 24px; margin-left: 10px;">UCC EVALUATION</span>
                             </div>
                         </div>
@@ -144,7 +144,7 @@
                     </li>
 
                     <li class="tab">
-                        <a href="registrar-page/importing/code.php">
+                        <a href="../../importing/code.php">
                             <img src="../../../system-img/import.png" width="22" height="22"> Import Grades
                         </a>
                     </li>
@@ -185,7 +185,7 @@ $result = mysqli_query($con, $query);
     <center><h1> UCC STUDENT LIST</h1> </center>
     <div class="dropdown">
             <label for="department">College Department:</label>
-                <select id="branch" name="branch" onchange="populateCourses()">
+                <select id="dept" name="branch" onchange="populateCourse()">
                 <option value="" selected disabled>Select College Department</option>
                     <?php echo $options; ?>
                 </select>
@@ -193,7 +193,7 @@ $result = mysqli_query($con, $query);
 
         <div class="dropdown">
             <label for="course">Course:</label>
-                <select name="course" id="courseDropdown" onchange="displayStudents()">
+                <select name="branch" id="courseDropdown" onchange="displayStudents()">
                 <option value="" selected disabled>Please select College Department first</option>
                 </select>
             </div>
@@ -233,7 +233,7 @@ $result = mysqli_query($con, $query);
 
             <div>
                 <br>
-        <table id="students" class="display">
+        <table id="student" class="display">
             <thead>
                 <tr>
                     <th>No</th>
@@ -243,6 +243,7 @@ $result = mysqli_query($con, $query);
                     <th>Year</th>
                     <th>Section</th>
                     <th>Status</th>
+                    <th>Action</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -303,22 +304,76 @@ $result = mysqli_query($con, $query);
         <script src="../../js/todo/jquery.todo.js"></script>
         <script src="../../js/plugins.js"></script>
         <script src="../../js/main.js"></script>
-  
-    <script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js">
-    </script>
+        
+        <script>
+        function populateCourse() {
+    var selectedDepartment = document.getElementById("dept").value;
 
+    // Fetch courses based on the selected department
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4) {
+            if (this.status == 200) {
+                var courses = JSON.parse(this.responseText);
 
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('#students').DataTable({
-            "lengthMenu": [20,50,100],
-            "paging": true,
-            "info": true,
-            "searching": true,
-            responsive: true,
-        });
+                var courseDropdown = document.getElementById("courseDropdown");
+                courseDropdown.innerHTML = "<option value='' selected disabled>Please select Course</option>"; // Add a default option
+
+                var courseDropdown = document.getElementById("courseDropdown");
+                courseDropdown.innerHTML = "<option value='' selected disabled>Please select Course</option>"; // Add a default option
+
+                for (var i = 0; i < courses.length; i++) {
+                    var option = document.createElement("option");
+                    option.value = courses[i].course;
+                    option.text = courses[i].course + ' (' + courses[i].acronym + ')';
+                    courseDropdown.appendChild(option);
+                }
+            } else {
+                console.error("Error fetching courses:", this.status, this.statusText);
+            }
+            
+        }
+    };
+
+    xhttp.open("GET", "get_courses.php?department=" + selectedDepartment, true);
+    xhttp.send();
+}
+// function displayStudents() {
+//         var selectedDepartment = document.getElementById("branch").value;
+//         var selectedCourse = document.getElementById("courseDropdown").value;
+//         var selectedDisplay = document.getElementById("display").value;
+//         var selectedYear = document.getElementById("year").value;
+//         var selectedSection = document.getElementById("sec").value;
+
+//         // You can modify this URL according to your server-side script handling the filtering
+//         var url = "get_students.php?department=" + selectedDepartment + "&course=" + selectedCourse;
+
+//         // Use AJAX to fetch filtered student data
+//         var xhttp = new XMLHttpRequest();
+//         xhttp.onreadystatechange = function () {
+//             if (this.readyState == 4 && this.status == 200) {
+//                 var studentsBody = document.getElementById("studentsBody");
+//                 studentsBody.innerHTML = this.responseText;
+//             }
+//         };
+//         xhttp.open("GET", url, true);
+//         xhttp.send();
+//     }
+</script>
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+<script>
+    $(document).ready(function () {
+    var table = $('#student').DataTable({
+        "lengthMenu": [20,50,100],
+        "paging": true,
+        "info": true,
+        "searching": true,
+        responsive: true,
     });
+});
 </script>
 </body>
 </html>
