@@ -72,8 +72,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             echo "Error: " . mysqli_error($con);
         }
-        
-        echo "Inserted Values: sname=$sname, fname=$fname, mname=$mname, sno=$sno, sex=$sex, course=$course, year1=$year1, section=$section, status1=$status1, semester=$semester, sy1=$sy1, sy2=$sy2, date_enrol=$date, campus=$selectedCampus, scodeValues=" . implode(", ", $scodeValues) . ", descValues=" . implode(", ", $descValues) . ", unitValues=" . implode(", ", $unitValues) . "<br>";
 
         mysqli_stmt_close($stmt);
     } else {
