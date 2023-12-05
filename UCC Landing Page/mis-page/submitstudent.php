@@ -2,6 +2,16 @@
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $requiredFields = ['sname', 'fname', 'mname', 'sno', 'sex', 'course', 'year1', 'section', 'status1', 'semester', 'sy1', 'sy2', 'date_enrol'];
+
+    foreach ($requiredFields as $field) {
+        if (empty($_POST[$field])) {
+            $_SESSION['message2'] = 'Please complete the form.';
+            header("Location: addstudent.php");
+            exit();
+        }
+    }
+    
     $con = mysqli_connect("localhost", "root", "", "uccevaluation");
     if (!$con) {
         die("Connection Error: " . mysqli_connect_error());
@@ -24,13 +34,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $scodeValues = $_POST['scode'];
     $descValues = $_POST['desc'];
     $unitValues = $_POST['unit'];
-    
+
     $selectQuery = "SELECT campus_name FROM campus";
     $result = mysqli_query($con, $selectQuery);
     $campusRow = mysqli_fetch_assoc($result);
     $selectedCampus = $campusRow['campus_name'];
-
-    $tableName = "student" . $semester . "sem" . $sy1 . $sy2;
+    $selectedCampus = $_POST['campus_name'];
+    // $tableName = "student" . $semester . "sem" . $sy1 . $sy2;
     $tableName1 = $sy1 . $sy2 . $semester . "sem" . $selectedCampus;
     // Construct the dynamic part of the query for scode, desc, and unit columns
     $columnInserts = '';
@@ -43,13 +53,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $typeDefinitionString = "sssssssssssss" . str_repeat("sss", count($scodeValues));
 
-    // Define your condition here
-    $useTableName1 = ($selectedCampus === 'Congress'); // Modify this condition accordingly
+    // // Define your condition here
+    // $useTableName1 = ($selectedCampus === 'Congress'); // Modify this condition accordingly
 
-    // Use the dynamically determined table name based on the condition
-    $tableNameToUse = $useTableName1 ? $tableName1 : $tableName;
+    // // Use the dynamically determined table name based on the condition
+    // $tableNameToUse = $useTableName1 ? $tableName1 : $tableName;
 
-    $insertQuery = "INSERT INTO $tableNameToUse (sname, fname, mname, sno, sex, course, year1, section, status1, semester, sy1, sy2, date_enrol, $columnInserts) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, $valuePlaceholders)";
+    $insertQuery = "INSERT INTO $tableName1 (sname, fname, mname, sno, sex, course, year1, section, status1, semester, sy1, sy2, date_enrol, $columnInserts) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, $valuePlaceholders)";
 
     $stmt = mysqli_prepare($con, $insertQuery);
 
@@ -66,12 +76,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         call_user_func_array('mysqli_stmt_bind_param', $bindParams);
 
         mysqli_stmt_execute($stmt);
-
+        
         if (mysqli_stmt_affected_rows($stmt) > 0) {
-            echo "Record added successfully!";
+            $_SESSION['message'] = 'Record added successfully!';
+            header("Location: addstudent.php");
+            exit();
         } else {
             echo "Error: " . mysqli_error($con);
         }
+
+        //echo "Inserted Values: sname=$sname, fname=$fname, mname=$mname, sno=$sno, sex=$sex, course=$course, year1=$year1, section=$section, status1=$status1, semester=$semester, sy1=$sy1, sy2=$sy2, date_enrol=$date, campus=$selectedCampus, scodeValues=" . implode(", ", $scodeValues) . ", descValues=" . implode(", ", $descValues) . ", unitValues=" . implode(", ", $unitValues) . "<br>";
 
         mysqli_stmt_close($stmt);
     } else {
