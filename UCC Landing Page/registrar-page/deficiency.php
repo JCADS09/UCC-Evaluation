@@ -51,7 +51,6 @@ while($row = mysqli_fetch_assoc($result)) {
     <link rel="stylesheet" href="../css/responsive.css">
     <link rel="stylesheet" href="../topbarcss/topbar.css">
     <script src="../js/vendor/modernizr-2.8.3.min.js"></script>
-    <!--End Links-->
 
         <script>
         function numOnly(evt) {
@@ -115,6 +114,8 @@ while($row = mysqli_fetch_assoc($result)) {
             }
         }
     </script>
+
+    <!--End Links-->
     <style>
         .panel-container {
             width: 70%;
@@ -170,6 +171,17 @@ while($row = mysqli_fetch_assoc($result)) {
             box-sizing: border-box;
         }
 
+        .cancel {
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+            border: none;
+            margin-left: 8.5%;
+            width: 13%;
+            background-color: green;
+        }
+
         input[type="text"] {
             padding: 8px;
             margin-bottom: 10px;
@@ -178,22 +190,19 @@ while($row = mysqli_fetch_assoc($result)) {
             box-sizing: border-box;
         }
 
-        button[type="submit"] {
-            padding: 10px;
-            background-color: green;
-            color: white;
+        .btnView {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #099c02;
+            color: #fff;
+            text-decoration: none;
             border: none;
             border-radius: 4px;
             cursor: pointer;
         }
 
-        button[type="button"] {
-            padding: 8px;
-            background-color: green;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+        .btnView:hover {
+            background-color: #0f9136;
         }
     </style>
 </head>
@@ -270,9 +279,9 @@ while($row = mysqli_fetch_assoc($result)) {
     <!-- Main Menu area End-->
 
 
-
-
     <?php
+    $con = mysqli_connect("localhost", "root", "", "uccevaluation");
+
     // Check if the form is submitted
     if(isset($_POST['displayTable'])) {
         // Check if the required keys are set in $_POST
@@ -293,9 +302,7 @@ while($row = mysqli_fetch_assoc($result)) {
             $tableName1 = $sy1.$sy2.$semester."sem".$selectedCampus;
 
             // Build the SQL query with dynamic table name
-            $query = "SELECT sno, CONCAT(sname, ', ', fname, ' ', mname) AS Name, course, year1 AS year, section AS section, status1 AS status, fg3 AS fg3 
-              FROM $tableName1";
-
+            $query = "SELECT sno, CONCAT(sname, ', ', fname, ' ', mname) AS Name, course, year1 AS year, section AS section, status1 AS status FROM $tableName1 WHERE '3.00' IN (mt1, ft1, fg1, mt2, ft2, fg2, mt3, ft3, fg3, mt4, ft4, fg4, mt5, ft5, fg5, mt6, ft6, fg6, mt7, ft7, fg7, mt8, ft8, fg8, mt9, ft9, fg9, mt10, ft10, fg10)";
             // Execute the query
             $result = mysqli_query($con, $query);
 
@@ -307,26 +314,42 @@ while($row = mysqli_fetch_assoc($result)) {
             // Handle the case when form data is incomplete or not set
             echo "<center><h4>Data not found.<h4></center>";
         }
+    } else {
+        // If the form is not submitted, display the default table for the current year and the next semester
+        $currentYear = date('Y');
+        $nextSemester = date('m') >= 7 ? '1st' : '2nd';
+
+
+        $defaultTableName = $currentYear.($currentYear + 1).$nextSemester."sem"."congress";
+
+        // Build the SQL query with the default table name
+        $query = "SELECT sno, CONCAT(sname, ', ', fname, ' ', mname) AS Name, course, year1 AS year, section AS section, status1 AS status FROM $defaultTableName WHERE '3.00' IN (mt1, ft1, fg1, mt2, ft2, fg2, mt3, ft3, fg3, mt4, ft4, fg4, mt5, ft5, fg5, mt6, ft6, fg6, mt7, ft7, fg7, mt8, ft8, fg8, mt9, ft9, fg9, mt10, ft10, fg10)";
+
+        // Execute the query
+        $result = mysqli_query($con, $query);
+
+        // Check for errors
+        if(!$result) {
+            die("Error in SQL query: ".mysqli_error($con));
+        }
     }
     ?>
+
+
     <div class="panel-container">
         <center>
             <h1> UNIVERSITY OF CALOOCAN CITY CANDIDATES </h1>
         </center>
         <div>
-            <a href="candidates.php"><button type="submit" style="background-color:#474645;border-color:#474645;">Latin
-                Honor</button></a>
-            <a href=""><button type="submit" style="background-color:#474645;border-color:#474645;">Dean Lister</button></a>
-            <a href="deficiency.php"><button type="submit"
-                                    style="background-color:#474645;border-color:#474645;">Deficiency</button></a>
+            <a href="candidates.php"><label class="cancel" style="background-color:#474645;border-color:#474645;width:10.5%;margin-left:0;">Latin
+                Honor</label></a>
+            <a href=""><label class="cancel" style="background-color:#474645;border-color:#474645;width:10.5%;margin-left:0;">Dean Lister</label></a>
+            <a href="deficiency.php"><label class="cancel"
+                                    style="background-color:#1a1817;border-color:#1a1817;width:10.5%;margin-left:0;">Deficiency</label></a>
         </div>
-        <br>
-        <label style="margin-left:3.5%">To display enrolled students:</label>
-        <!-- TO DISPLAY TABLE -->
-
         <form method="POST" action="" class="table-select-form">
             <div class="dropdown">
-                <div class="row p-t-20" style="margin-left:2%">
+                <div class="row p-t-20" style="margin-left:7%;">
 
                     <div class="col-md-3">
                         <label><b>A.Y.:&nbsp</b></label>
@@ -347,7 +370,7 @@ while($row = mysqli_fetch_assoc($result)) {
                     </div>
                     <div>
                         <b><label> Campus:&nbsp</label></b>
-                        <select name="campus_name" style="width:52%;" onchange="updateSelectedCampus(this.value)">
+                        <select name="campus_name" style="width:20%;" onchange="updateSelectedCampus(this.value)">
                             <option value="" selected disabled>- Please select campus-</option>
                             <?php
                             // Fetch campus names from the database
@@ -361,12 +384,12 @@ while($row = mysqli_fetch_assoc($result)) {
                             ?>
                         </select>
 
-                        <button type="submit" name="displayTable"
+
+                        <button type="submit" name="displayTable" class="btn btn-success"
                             style="background-color:#6e6e6e;border-color:#6e6e6e;">Show Data</button>
                     </div>
                 </div>
         </form>
-
         <div class="dropdown">
             <label for="department">College Department:</label>
             <select id="branch" name="branch" onchange="populateCourses()">
@@ -381,6 +404,16 @@ while($row = mysqli_fetch_assoc($result)) {
                 <option value="" selected disabled>Please select College Department first</option>
             </select>
         </div>
+
+        <!-- <div style="display: inline-block;">
+            <label for="display">Select here what do you want to display:&nbsp&nbsp&nbsp</label>
+            <select id="display" name="display" style="width: 150px;">
+            <option value="" selected disabled>---- Select Here ----</option>
+                <option value="">Latin Honor</option>
+                <option value="">Dean Lister</option>
+                <option value="">Deficiency</option>
+            </select>
+        </div> -->
 
         <div style="display: inline-block; margin-left: 20px;">
             <label for="year">Year:&nbsp&nbsp&nbsp</label>
@@ -419,8 +452,8 @@ while($row = mysqli_fetch_assoc($result)) {
                     <th>Course</th>
                     <th>Year</th>
                     <th>Section</th>
-                    <th>Rank</th>
-                    <th>GWA</th>
+                    <th>Action</th>
+
                 </tr>
             </thead>
             <tbody id="studentsBody">
@@ -434,8 +467,7 @@ while($row = mysqli_fetch_assoc($result)) {
                     echo '<td>'.$row['course'].'</td>';
                     echo '<td>'.$row['year'].'</td>';
                     echo '<td>'.$row['section'].'</td>';
-                    echo '<td>'."Cum Laude".'</td>';
-                    echo '<td>'.$row['fg3'].'</td>';
+                    echo '<td><center><a class="btnView" href="viewdeficiency.php?id='.$row['sno'].'"> View</a></center></td>';
                     echo '</tr>';
                     $count++;
                 }
@@ -579,8 +611,6 @@ while($row = mysqli_fetch_assoc($result)) {
                 }
             }
         }
-
-
     </script>
 </body>
 

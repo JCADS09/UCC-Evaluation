@@ -5,18 +5,16 @@ $con = mysqli_connect("localhost", "root", "", "uccevaluation");
 if (!$con) {
     die("Connection Error: " . mysqli_connect_error());
 }
-$result = mysqli_query($con, "SELECT DISTINCT campus_name FROM campus");
+$result = mysqli_query($con, "SELECT DISTINCT cdepartment FROM cdept");
 if (!$result) {
     die("Query Error: " . mysqli_error($con));
 }
 
-
 $options = "";
 while ($row = mysqli_fetch_assoc($result)) {
-    $campus = $row['campus_name'];
-    $options .= "<option value='$campus'>$campus</option>";
+    $cdepartment = $row['cdepartment'];
+    $options .= "<option value='$cdepartment'>$cdepartment</option>";
 }
-
 // // Check if the form is submitted
 // if (isset($_POST['displayTable'])) {
 //     $selected_table = $_POST['tableSelect'];
@@ -145,8 +143,6 @@ while ($row = mysqli_fetch_assoc($result)) {
             border-collapse: collapse;
             font-family: Arial;
             font-size: 13px;
-            padding:10
-        
         }
 
         table th,
@@ -289,8 +285,9 @@ while ($row = mysqli_fetch_assoc($result)) {
 
         <br>
         <center>
-            <h1> UCC STUDENTS' DATA </h1>
+            <h3> UCC STUDENTS' DATA </h3>
         </center>
+
         <div class="row">
             <div class="col-md-12 mt-4">
                 <?php
@@ -299,10 +296,19 @@ while ($row = mysqli_fetch_assoc($result)) {
                     unset($_SESSION['message']);
                 }
                 ?>
+
+
+                <div>
+                    <a href="../addstudent.php"><label class="cancel">Add New Student</label></a>
+                </div>
+
                 <div class="card-body">
                     <form action="code.php" method="POST" enctype="multipart/form-data">
                         <div class="row p-t-20" style="margin-left:5%;">
                             <div class="col-md-10">
+                                Please upload the enrollment data with the correct FILE NAME. <b> (File Name: e.g.
+                                    202320242ndSemCongress)</b><br>
+                                Choose a File <b>(File type: .xlsx):</b>
                                 <div class="input-file">
                                     <input type="file" name="import_file" class="form-control" />
                                 </div>
@@ -316,15 +322,14 @@ while ($row = mysqli_fetch_assoc($result)) {
                         </div>
                 </div>
                 </form>
-                <div>
-                    <a href="../addstudent.php"><label class="cancel">Add New Student</label></a>
-                </div>
 
+                <label style="margin-left:8.2%">To display enrolled students:</label>
                 <!-- TO DISPLAY TABLE -->
 
                 <form method="POST" action="" class="table-select-form">
                     <div class="dropdown">
                         <div class="row p-t-20" style="margin-left:7%;">
+
                             <div class="col-md-3">
                                 <label><b>A.Y.:&nbsp</b></label>
                                 <input type="text" style="width:30%;" name="sy1" placeholder="From" autocomplete="off"
@@ -360,87 +365,127 @@ while ($row = mysqli_fetch_assoc($result)) {
                                 </select>
                             </div>
                             <div style="margin-left:3%;">
-                                <button type="submit" name="displayTable" class="btn btn-success" style="background-color:#6e6e6e;border-color:#6e6e6e;">Show Data</button>
+                                <button type="submit" name="displayTable" class="btn btn-success"
+                                    style="background-color:#6e6e6e;border-color:#6e6e6e;">Show Data</button>
                             </div>
                         </div>
                 </form>
             </div>
+            <hr style="border: 1px solid #ccc;">
+                To help you to filter specific the data you need to see.
+                <div class="dropdown">
+                    <label for="department"><br>College Department:</label>
+                    <select id="branch" name="branch" onchange="populateCourses()">
+                        <option value="" selected disabled>Select College Department</option>
+                        <?php echo $options; ?>
+                    </select>
+                </div>
 
+                <div class="dropdown">
+                    <label for="course">Course:</label>
+                    <select name="course" id="courseDropdown" onchange="displayStudents()">
+                        <option value="" selected disabled>Please select College Department first</option>
+                    </select>
+                </div>
 
-            <br>
-            <?php
-            include 'db.php';
+                <div style="display: inline-block; margin-left: 20px;">
+                    <label for="year">Year:&nbsp&nbsp&nbsp</label>
+                    <select id="year" name="year" style="width: 80px;" onchange="filterTable()">
+                        <option value="" selected disabled>Year</option>
+                        <option value="1ST">1ST</option>
+                        <option value="2ND">2ND</option>
+                        <option value="3RD">3RD</option>
+                        <option value="4TH">4TH</option>
+                    </select>
+                </div>
 
-            // Check if the form is submitted
-            if (isset($_POST['displayTable'])) {
-                // Check if the required keys are set in $_POST
-                if (
-                    isset($_POST['semester']) &&
-                    isset($_POST['sy1']) &&
-                    isset($_POST['sy2']) &&
-                    isset($_POST['campus_name'])
-                ) {
-                    $semester = $_POST['semester'];
-                    $sy1 = $_POST['sy1'];
-                    $sy2 = $_POST['sy2'];
+                <div style="display: inline-block; margin-left: 20px;">
+                    <label>Section:&nbsp&nbsp&nbsp</label>
+                    <select id="sec" name="sec" style="width: 69px;" onchange="filterTable()">
+                        <option value="" selected disabled>Sec</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                    </select>
+                </div>
+                                </div>
+                <br>
+                <?php
+                include 'db.php';
 
-                    // Sanitize and validate the input to prevent SQL injection
-                    $selectedCampus = mysqli_real_escape_string($con, $_POST['campus_name']);
+                // Check if the form is submitted
+                if (isset($_POST['displayTable'])) {
+                    // Check if the required keys are set in $_POST
+                    if (
+                        isset($_POST['semester']) &&
+                        isset($_POST['sy1']) &&
+                        isset($_POST['sy2']) &&
+                        isset($_POST['campus_name'])
+                    ) {
+                        $semester = $_POST['semester'];
+                        $sy1 = $_POST['sy1'];
+                        $sy2 = $_POST['sy2'];
 
-                    // Build the dynamic table name
-                    $tableName1 = $sy1 . $sy2 . $semester . "sem" . $selectedCampus;
+                        // Sanitize and validate the input to prevent SQL injection
+                        $selectedCampus = mysqli_real_escape_string($con, $_POST['campus_name']);
 
-                    // Build the SQL query with dynamic table name
-                    $query = "SELECT sno, CONCAT(sname, ', ', fname, ' ', mname) AS Name, course, year1 AS year, section AS section, status1 AS status 
+                        // Build the dynamic table name
+                        $tableName1 = $sy1 . $sy2 . $semester . "sem" . $selectedCampus;
+
+                        // Build the SQL query with dynamic table name
+                        $query = "SELECT sno, CONCAT(sname, ', ', fname, ' ', mname) AS Name, course, year1 AS year, section AS section, status1 AS status 
               FROM $tableName1";
 
-                    // Execute the query
-                    $result = mysqli_query($con, $query);
+                        // Execute the query
+                        $result = mysqli_query($con, $query);
 
-                    // Check for errors
-                    if (!$result) {
-                        die("Error in SQL query: " . mysqli_error($con));
-                    }
-                } else {
-                    // Handle the case when form data is incomplete or not set
-                    echo "<center><h4>Data not found.<h4></center>";
-                }
-            }
-            ?>
-            <table id="students" class="display">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Student No</th>
-                        <th>Name</th>
-                        <th>Course</th>
-                        <th>Year</th>
-                        <th>Section</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    if ($result && mysqli_num_rows($result) > 0) {
-                        $count = 1;
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            echo '<tr>';
-                            echo '<td>' . $count . '</td>';
-                            echo '<td>' . $row['sno'] . '</td>';
-                            echo '<td>' . $row['Name'] . '</td>';
-                            echo '<td>' . $row['course'] . '</td>';
-                            echo '<td>' . $row['year'] . '</td>';
-                            echo '<td>' . $row['section'] . '</td>';
-                            echo '<td>' . $row['status'] . '</td>';
-                            echo '</tr>';
-                            $count++;
+                        // Check for errors
+                        if (!$result) {
+                            die("Error in SQL query: " . mysqli_error($con));
                         }
+                    } else {
+                        // Handle the case when form data is incomplete or not set
+                        echo "<center><h4>Data not found.<h4></center>";
                     }
-                    ?>
-                </tbody>
-            </table>
-        </div>
+                }
+                ?>
+<br>            </div>
 
+                <table id="students" class="display">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Student No</th>
+                            <th>Name</th>
+                            <th>Course</th>
+                            <th>Year</th>
+                            <th>Section</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        if ($result && mysqli_num_rows($result) > 0) {
+                            $count = 1;
+                            while ($row = mysqli_fetch_assoc($result)) {
+                                echo '<tr>';
+                                echo '<td>' . $count . '</td>';
+                                echo '<td>' . $row['sno'] . '</td>';
+                                echo '<td>' . $row['Name'] . '</td>';
+                                echo '<td>' . $row['course'] . '</td>';
+                                echo '<td>' . $row['year'] . '</td>';
+                                echo '<td>' . $row['section'] . '</td>';
+                                echo '<td>' . $row['status'] . '</td>';
+                                echo '</tr>';
+                                $count++;
+                            }
+                        }
+                        ?>
+                    </tbody>
+                </table>
+        </div>
+ 
 
         <!--Script-->
         <script src="../../js/vendor/jquery-1.12.4.min.js"></script>
@@ -477,22 +522,106 @@ while ($row = mysqli_fetch_assoc($result)) {
         <!--End Script-->
 
 
-        <script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-        <script type="text/javascript"
-            src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 
-        <script type="text/javascript">
+
+        <script>
+            var table;
+
             $(document).ready(function () {
-                $('#students').DataTable({
+                table = $('#students').DataTable({
                     "lengthMenu": [20, 50, 100],
                     "paging": true,
                     "info": true,
-                    "searching": true,
                     responsive: true,
                 });
             });
-        </script>
 
+            function populateCourses() {
+                var selectedDepartment = document.getElementById("branch").value;
+
+                // Fetch courses based on the selected department
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState == 4) {
+                        if (this.status == 200) {
+                            var courses = JSON.parse(this.responseText);
+
+                            var courseDropdown = document.getElementById("courseDropdown");
+                            courseDropdown.innerHTML = "<option value='' selected disabled>Please select Course</option>";
+
+                            for (var i = 0; i < courses.length; i++) {
+                                var option = document.createElement("option");
+                                option.value = courses[i].course; // Use the course code as the value
+                                option.text = courses[i].course + ' (' + courses[i].acronym + ')'; // Display the course code and acronym
+                                option.setAttribute('data-acronym', courses[i].acronym); // Store the acronym in a data attribute
+                                courseDropdown.appendChild(option);
+                            }
+
+                        } else {
+                            console.error("Error fetching courses:", this.status, this.statusText);
+                        }
+                    }
+                };
+
+                xhttp.open("GET", "get_courses.php?department=" + selectedDepartment, true);
+                xhttp.send();
+            }
+
+            function displayStudents() {
+                // Get selected values from dropdowns
+                var selectedCourse = $("#courseDropdown option:selected").text();
+
+                // Get the DataTable instance
+                var table = $('#students').DataTable();
+
+                // Clear existing filters including global search
+                table.search('').columns().search('').draw();
+
+                // Extract text inside parentheses
+                var courseInParentheses = selectedCourse.match(/\(([^)]+)\)/);
+
+                if (courseInParentheses) {
+                    courseInParentheses = courseInParentheses[1];
+
+                    // Apply new filters for course
+                    if (courseInParentheses !== null && courseInParentheses !== "") {
+                        // Use the DataTable API for global search
+                        table.search(courseInParentheses).draw();
+
+                        // Log table data after applying course filter
+                        var tableData = table.data().toArray();
+                        console.log("Table Data After Course Filter:");
+                        tableData.forEach(function (row, index) {
+                            console.log("Row " + (index + 1) + ":", row);
+                        });
+                    }
+                } else {
+                    console.log("Table has no data.");
+                }
+            }
+            function filterTable() {
+                var yearFilter = document.getElementById("year").value;
+                var secFilter = document.getElementById("sec").value;
+                var table = document.getElementById("students");
+                var rows = table.getElementsByTagName("tr");
+
+                for (var i = 1; i < rows.length; i++) {
+                    var cells = rows[i].getElementsByTagName("td");
+                    var year = cells[4].innerText;
+                    var sec = cells[5].innerText;
+
+                    if ((yearFilter === "" || year === yearFilter) &&
+                        (secFilter === "" || sec === secFilter)) {
+                        rows[i].style.display = "";
+                    } else {
+                        rows[i].style.display = "none";
+                    }
+                }
+            }
+        </script>
 </body>
 
 </html>

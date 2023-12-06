@@ -285,7 +285,7 @@ session_start();
         {
             // Check if all columns are null
             if ($mtColumn === null && $ftColumn === null && $fgColumn === null) {
-                $_SESSION['message'] = "No columns to update for student $studentNumber.";
+                $_SESSION['message'] = "No columns to update for student $studentNumber.<br>";
                 $_SESSION['message'] = " $tableName.";
 
                 return;
@@ -402,8 +402,7 @@ session_start();
 
                                     if ($result) {
                                         // Loop through the result to find the matching column for the subject code
-                                        $foundColumn = false;
-
+                                      
                                         $foundColumn = false;
                                         while ($row = mysqli_fetch_assoc($result)) {
                                             $columnName = $row['column_name'];
@@ -429,6 +428,9 @@ session_start();
                                         if (!$foundColumn) {
                                             echo "No matching column found for Subject Code $subjectCode and Student Number $studentNumber";
                                             // You can handle this situation accordingly, e.g., set default values or skip the current subjectCode for the current student
+                                        }
+                                        if(!empty($notFoundStudents)) {
+                                            echo "STUDENT NOT FOUND.<br>Student: $notFoundStudents.<br>STEP 1. Please double check if the student is enrolled.<br>Step 2. Ask the MIS about the problem.<br>Step 3. Try to import grading sheet again.<br>";
                                         }
                                         // Get midterm, final term, and final grades from the data
                                         $midterm = isset($data['midterm'][0]) ? $data['midterm'][0] : null;

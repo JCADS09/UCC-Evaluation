@@ -1,18 +1,25 @@
 <?php
-require_once('db.php');
-$query = "SELECT * from student2ndsem20212022";
+$con = mysqli_connect("localhost", "root", "", "uccevaluation");
+if(!$con) {
+    die("Connection Error: ".mysqli_connect_error());
+}
+
+$id = isset($_GET['id']) ? $_GET['id'] : null;
+$tableName = isset($_GET['table']) ? $_GET['table'] : null;
+
+if($id === null || $tableName === null) {
+    die("Invalid parameters in the URL");
+}
+
+$query = "SELECT sno, CONCAT(sname, ', ', fname, ' ', mname) AS Name, course, year1 AS year, section AS section, status1 AS status 
+          FROM $tableName
+          WHERE sno = '$id'";
+
 $result = mysqli_query($con, $query);
-?>
-<?php 
-include 'db.php';
-session_start();
 
-	$id = $_GET['id'];
-
-	$query = mysqli_query($con,"SELECT * FROM student2ndsem20212022 where sno = '$id' ");
-	$row = mysqli_fetch_assoc($query);
-	$student = $row['fname'].' '. $row['sname'];
-
+if(!$result) {
+    die("Error in SQL query: ".mysqli_error($con));
+}
 ?>
 <!doctype html>
 <html class="no-js" lang="">
@@ -199,9 +206,12 @@ $user = $_SESSION['id'];
 		<?php 
 		include 'db.php';
 		$id = $_GET['id'];
-		$sql = mysqli_query($con,"SELECT * from student2ndsem20212022 where sno = '$id'");
-		while($row = mysqli_fetch_assoc($sql)){
-			$mid = $row['mname'];
+        $tableName = $_GET['table']; 
+        
+        $sql = mysqli_query($con, "SELECT * FROM $tableName WHERE sno = '$id'");
+
+        while($row = mysqli_fetch_assoc($sql)) {
+            $mid = $row['mname'];
 		?>
 			<tr>
 				<td style="width:600px;font-size:15px;font-family:arial;">
@@ -278,38 +288,38 @@ $user = $_SESSION['id'];
         <?php
             include 'db.php';
             $id = $_GET['id'];
-            $sql=  mysqli_query($con, "SELECT scode1, desc1, unit1, FG1, scode2, desc2, unit2, FG2, scode3, desc3, unit3, FG3, scode4, desc4, unit4, FG4, scode5, desc5, unit5, FG5, scode6, desc6, unit6, FG6, scode7, desc7, unit7, FG7, scode8, desc8, unit8, FG8, scode9, desc9, unit9, FG9, scode10, desc10, unit10, FG10 FROM student2ndsem20212022 where sno = '$id' ");
+        $tableName = $_GET['table'];
+        $sql=  mysqli_query($con, "SELECT scode1, desc1, unit1, FG1, scode2, desc2, unit2, FG2, scode3, desc3, unit3, FG3, scode4, desc4, unit4, FG4, scode5, desc5, unit5, FG5, scode6, desc6, unit6, FG6, scode7, desc7, unit7, FG7, scode8, desc8, unit8, FG8, scode9, desc9, unit9, FG9, scode10, desc10, unit10, FG10 FROM $tableName where sno = '$id' ");
 
-            $totalUnits = 0;
-            $totalfg = 0;
-            
-            while($row = mysqli_fetch_assoc($sql)) {
-        ?>
-                <tr>
-                    <?php
-                        $i=1;
-                        for ($j = 1; $j <= 10; $j++) {
-                            $scodeKey = 'scode' . $j;
-                            $descKey = 'desc' . $j;
-                            $FGKey = 'FG' . $j;
-                            $unitKey = 'unit' . $j;
-                
-                            if (!empty($row[$scodeKey])) {
-                                echo '<tr style="border:1px solid black;">';
-                                echo '<td><center>' . $i++ . '</td>';
-                                echo '<td><center>' . $row[$scodeKey] . '</td>';
-                                echo '<td style="font-size:14px;">' . $row[$descKey] . '</td>';
-                                echo '<td><center>' . $row[$FGKey] . '</center></td>';
-                                echo '<td><center>' . $row[$unitKey] . '</td>';
-                                $ans = $row[$FGKey] * $row[$unitKey];
-                                echo '<td><center>' . $ans . '</center></td>';
-                                echo '</tr>';
+        $totalUnits = 0;
+        $totalfg = 0;
 
-                                $totalUnits += $row[$unitKey];
-                                $totalfg += $ans;
-                            }
-                        }
-                    }
+        while ($row = mysqli_fetch_assoc($sql)) {
+            $i = 1;
+            for ($j = 1; $j <= 10; $j++) {
+                $scodeKey = 'scode' . $j;
+                $descKey = 'desc' . $j;
+                $FGKey = 'FG' . $j;
+                $unitKey = 'unit' . $j;
+
+                if (!empty($row[$scodeKey])) {
+                    echo '<tr style="border:1px solid black;">';
+                    echo '<td><center>' . $i++ . '</td>';
+                    echo '<td><center>' . $row[$scodeKey] . '</td>';
+                    echo '<td style="font-size:14px;">' . $row[$descKey] . '</td>';
+                    echo '<td><center>' . $row[$FGKey] . '</center></td>';
+                    echo '<td><center>' . $row[$unitKey] . '</td>';
+                    $ans = $row[$FGKey] * $row[$unitKey];
+                    echo '<td><center>' . $ans . '</center></td>';
+                    echo '</tr>';
+
+                    $totalUnits += $row[$unitKey];
+                    $totalfg += $ans;
+
+                    $GWA = $totalfg / $totalUnits;
+                }
+            }
+        }
                     ?>
                 </tr>
                 </table>
@@ -318,9 +328,9 @@ $user = $_SESSION['id'];
                             <b><label for="">Total Units:&nbsp</label></b>
 					        <h style="font-size:15px"><?php echo $totalUnits ?></h>
                     </div>
-                    <div style="margin-left:70%;">
+                    <div style="margin-left:67%;">
                             <b><label for="">GWA:&nbsp</label></b>
-					        <h style="font-size:15px"><?php echo $totalfg ?></h>
+					        <h style="font-size:15px"><?php echo number_format($GWA, 2) ?></h>
                     </div>
         </div>
         

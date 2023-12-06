@@ -296,7 +296,10 @@ if (isset($_SESSION['table_name'])) {
         }
     }
     ?>
+
+    
     <div class="panel-container">
+        
         <table id="students" class="display">
             <thead>
                 <tr>
@@ -367,18 +370,106 @@ if (isset($_SESSION['table_name'])) {
     <!--End Script-->
 
 
-    <script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript"
-        src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+     <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#students').DataTable({
-                responsive: true
+                
+    <script>
+        var table;
+
+$(document).ready(function () {
+    table = $('#students').DataTable({
+        "lengthMenu": [20, 50, 100],
+        "paging": true,
+        "info": true,
+        responsive: true,
+    });
+});
+
+        function populateCourses() {
+            var selectedDepartment = document.getElementById("branch").value;
+
+            // Fetch courses based on the selected department
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        var courses = JSON.parse(this.responseText);
+
+                        var courseDropdown = document.getElementById("courseDropdown");
+                        courseDropdown.innerHTML = "<option value='' selected disabled>Please select Course</option>";
+
+                        for (var i = 0; i < courses.length; i++) {
+                            var option = document.createElement("option");
+                            option.value = courses[i].course; // Use the course code as the value
+                            option.text = courses[i].course + ' (' + courses[i].acronym + ')'; // Display the course code and acronym
+                            option.setAttribute('data-acronym', courses[i].acronym); // Store the acronym in a data attribute
+                            courseDropdown.appendChild(option);
+                        }
+
+                    } else {
+                        console.error("Error fetching courses:", this.status, this.statusText);
+                    }
+                }
+            };
+
+            xhttp.open("GET", "get_courses.php?department=" + selectedDepartment, true);
+            xhttp.send();
+        }
+ 
+        function displayStudents() {
+    // Get selected values from dropdowns
+    var selectedCourse = $("#courseDropdown option:selected").text();
+
+    // Get the DataTable instance
+    var table = $('#students').DataTable();
+
+    // Clear existing filters including global search
+    table.search('').columns().search('').draw();
+
+    // Extract text inside parentheses
+    var courseInParentheses = selectedCourse.match(/\(([^)]+)\)/);
+
+    if (courseInParentheses) {
+        courseInParentheses = courseInParentheses[1];
+
+        // Apply new filters for course
+        if (courseInParentheses !== null && courseInParentheses !== "") {
+            // Use the DataTable API for global search
+            table.search(courseInParentheses).draw();
+
+            // Log table data after applying course filter
+            var tableData = table.data().toArray();
+            console.log("Table Data After Course Filter:");
+            tableData.forEach(function (row, index) {
+                console.log("Row " + (index + 1) + ":", row);
             });
-        });
-    </script>
+        }
+    } else {
+        console.log("Table has no data.");
+    }
+}
+function filterTable() {
+            var yearFilter = document.getElementById("year").value;
+            var secFilter = document.getElementById("sec").value;
+            var table = document.getElementById("students");
+            var rows = table.getElementsByTagName("tr");
 
+            for (var i = 1; i < rows.length; i++) {
+                var cells = rows[i].getElementsByTagName("td");
+                var year = cells[4].innerText;
+                var sec = cells[5].innerText;
+
+                if ((yearFilter === "" || year === yearFilter) &&
+                    (secFilter === "" || sec === secFilter)) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+    </script>
 </body>
 
 </html>
